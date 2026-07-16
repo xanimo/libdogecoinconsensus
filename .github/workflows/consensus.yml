@@ -1,0 +1,145 @@
+name: consensus
+
+# Two jobs with different purposes:
+#
+#   verify — does the pipeline still work? Runs on every push/PR against the
+#            pinned Core commit. Deterministic: same Core, same output, always.
+#
+#   drift  — has Core moved? Runs on a schedule against Core's master tip.
+#            Expected to fail sometimes. That's the point: a consensus change
+#            upstream should produce a notification, not a surprise six months
+#            later.
+#
+# Splitting them matters. If drift detection ran on every PR, a Core change
+# would redden unrelated pull requests and people would learn to ignore the
+# red. A scheduled job that fails loudly and rarely stays meaningful.
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  schedule:
+    # 06:00 UTC Mondays — weekly is enough for a chain whose consensus
+    # parameters change on a scale of years.
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  verify:
+    name: pipeline (pinned Core)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: read pinned Core commit
+        id: pin
+        run: |
+          # The spec records exactly what it was generated from. Reproduce that,
+          # not "whatever Core is today" — otherwise this job's meaning drifts.
+          COMMIT=$(python3 -c "import json;print(json.load(open('spec.json'))['_provenance']['core_commit'])")
+          echo "commit=$COMMIT" >> "$GITHUB_OUTPUT"
+          echo "pinned Core commit: $COMMIT"
+
+      - name: checkout Dogecoin Core at the pinned commit
+        run: |
+          git clone --filter=blob:none --no-checkout \
+            https://github.com/dogecoin/dogecoin.git core
+          git -C core checkout ${{ steps.pin.outputs.commit }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: install deps
+        run: pip install tree_sitter tree_sitter_cpp
+
+      - name: regenerate spec from pinned Core
+        run: |
+          ./extract_chainparams.py core/src/chainparams.cpp -o spec.regen.json
+          ./extract_opcodes.py core/src/script/script.h -o opcodes.regen.json
+          ./extract_constants.py core/src/consensus/validation.h \
+            --prefix REJECT_ -o reject.regen.json
+
+      - name: committed spec must match a fresh extraction
+        run: |
+          # If this fails, the committed spec was hand-edited, or generated from
+          # a different Core than its own provenance claims. Either way the pin
+          # is a lie and nothing downstream can be trusted.
+          #
+          # compare_specs.py ignores environment-dependent fields (filesystem
+          # paths, local dirty state) but NOT core_commit or file_sha256 --
+          # those ARE the pin. A check that cries wolf gets disabled, and a
+          # disabled check protects nothing.
+          fail=0
+          ./compare_specs.py spec.json spec.regen.json \
+            --label-first "committed spec.json" \
+            --label-second "fresh extraction from pinned Core" || fail=1
+          ./compare_specs.py opcodes.json opcodes.regen.json \
+            --label-first "committed opcodes.json" \
+            --label-second "fresh extraction from pinned Core" || fail=1
+          ./compare_specs.py reject.json reject.regen.json \
+            --label-first "committed reject.json" \
+            --label-second "fresh extraction from pinned Core" || fail=1
+          if [ "$fail" != "0" ]; then
+            echo "::error::committed spec does not reproduce from its pinned Core commit"
+          fi
+          exit $fail
+
+      - name: prove the argmax reduction still matches Core's BST walk
+        run: ./verify_selection.py spec.json
+
+      - name: generate and test
+        run: make check CORE=core
+
+      - name: regression gate against the reviewed pin
+        run: |
+          if [ -f pinned.json ]; then
+            ./regression_gate.py spec.json --check --against pinned.json
+          else
+            echo "no pinned.json — skipping (create one with: make pin)"
+          fi
+
+  drift:
+    name: Core drift (master tip)
+    runs-on: ubuntu-latest
+    # Only on schedule/manual: a Core change should not redden unrelated PRs.
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: checkout Dogecoin Core master
+        run: |
+          git clone --depth 1 --branch master \
+            https://github.com/dogecoin/dogecoin.git core
+          echo "Core tip: $(git -C core rev-parse HEAD)"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: install deps
+        run: pip install tree_sitter tree_sitter_cpp
+
+      - name: extract from Core tip
+        run: ./extract_chainparams.py core/src/chainparams.cpp -o tip.json
+
+      - name: compare against the reviewed pin
+        run: |
+          if [ ! -f pinned.json ]; then
+            echo "::warning::no pinned.json — nothing to compare against."
+            echo "Create the baseline with: make pin CORE=<path>"
+            exit 0
+          fi
+          if ! ./regression_gate.py tip.json --check --against pinned.json; then
+            echo "::error::Dogecoin Core's consensus definition has changed since the pin."
+            echo "This is not automatically a bug — but it must be reviewed, not absorbed."
+            echo "If the change is intended: make spec CORE=<path> && make pin && commit."
+            exit 1
+          fi
+
+      - name: verify the reduction still holds at Core tip
+        run: |
+          # If Core adds a consensus regime with different tree wiring, the
+          # sorted-array assumption could stop holding. Catch that here rather
+          # than in a client that has already shipped.
+          ./verify_selection.py tip.json

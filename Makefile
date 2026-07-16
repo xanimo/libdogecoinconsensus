@@ -29,7 +29,7 @@ GENERATED_REJECT := $(SRC)/dogecoin_reject.h \
                     $(SRC)/dogecoin_reject.c \
                     $(SRC)/test_reject.c
 
-.PHONY: all spec opcodes reject gen verify check diff pin gate clean help check-libdogecoin
+.PHONY: all spec opcodes reject gen verify check diff pin gate ci clean help check-libdogecoin
 
 all: check
 
@@ -43,6 +43,7 @@ help:
 	@echo "make diff   LIBDOGECOIN=<path>   checkpoint drift vs libdogecoin"
 	@echo "make pin                         snapshot consensus as reviewed baseline"
 	@echo "make gate                        fail if Core moved since the pin"
+	@echo "make ci     CORE=<path>          everything CI runs (reproducibility + tests)"
 	@echo "make clean"
 
 # We want two things that pull against each other:
@@ -149,8 +150,30 @@ diff: check-libdogecoin
 	  echo "error: spec.json not found. Run: make spec CORE=<path>"; exit 1; }
 	./diff_checkpoints.py spec.json --libdogecoin $(LIBDOGECOIN)/src/chainparams.c
 
+# What CI runs. Reproduces the committed spec from its pinned Core commit,
+# proves the reduction, builds, tests, checks the gate.
+# If this passes locally it will pass in CI.
+ci: spec.json opcodes.json reject.json
+	./extract_chainparams.py $(CHAINPARAMS) -o spec.regen.json
+	./extract_opcodes.py $(SCRIPT_H) -o opcodes.regen.json
+	./extract_constants.py $(VALIDATION_H) --prefix REJECT_ -o reject.regen.json
+	./compare_specs.py spec.json spec.regen.json \
+	    --label-first "committed spec.json" --label-second "fresh extraction"
+	./compare_specs.py opcodes.json opcodes.regen.json \
+	    --label-first "committed opcodes.json" --label-second "fresh extraction"
+	./compare_specs.py reject.json reject.regen.json \
+	    --label-first "committed reject.json" --label-second "fresh extraction"
+	@rm -f spec.regen.json opcodes.regen.json reject.regen.json
+	$(MAKE) check CORE=$(CORE)
+	@if [ -f pinned.json ]; then \
+	  ./regression_gate.py spec.json --check --against pinned.json; \
+	else \
+	  echo "no pinned.json — create the baseline with: make pin"; \
+	fi
+
 clean:
 	rm -f t_bound t_exh t_ops t_rej $(GENERATED) $(GENERATED_OPS) $(GENERATED_REJECT)
+	rm -f spec.regen.json opcodes.regen.json reject.regen.json
 	rm -rf __pycache__
 
 # spec.json is deliberately NOT removed by clean: it's the pinned reference and

@@ -156,6 +156,50 @@ def parse_lhs(lhs_node, code: bytes):
     return {"kind": "identifier", "raw": text}
 
 
+def parse_chaintxdata(expr: str):
+    """Extract ChainTxData{ nTime, nTxCount, dTxRate } positional fields.
+
+    Core writes it as an aggregate initializer with heavy comments:
+
+        ChainTxData{
+            // Data as of block e7d4577... (height 5050000).
+            1705383360, // * UNIX timestamp of last checkpoint block
+            226128837,  // * total number of transactions ...
+            4.23        // * estimated transactions per second
+        }
+
+    Note dTxRate is a DOUBLE -- the only non-integer value in the whole spec.
+    Truncating it to an int would silently change fee estimation.
+
+    This is not consensus: it's a fee/tx-rate estimation hint. Extracted for
+    completeness so _unparsed can reach zero -- a permanently nonzero _unparsed
+    trains you to ignore it, which is how the fork tree would have slipped past.
+
+    Returns None if the shape doesn't match, so the caller leaves it in
+    _unparsed rather than claiming a bogus parse."""
+    if "ChainTxData" not in expr:
+        return None
+    body = expr[expr.index("{") + 1:expr.rindex("}")] if "{" in expr and "}" in expr else ""
+    # strip // comments; they carry the source block hash but are prose, not data
+    lines = []
+    for line in body.split("\n"):
+        i = line.find("//")
+        if i >= 0:
+            line = line[:i]
+        lines.append(line)
+    flat = " ".join(lines)
+    parts = [p.strip() for p in flat.split(",") if p.strip()]
+    if len(parts) != 3:
+        return None
+    try:
+        n_time = int(parts[0], 0)
+        n_tx = int(parts[1], 0)
+        d_rate = float(parts[2])
+    except ValueError:
+        return None
+    return {"nTime": n_time, "nTxCount": n_tx, "dTxRate": d_rate}
+
+
 def parse_checkpoints(expr: str):
     """Extract (height, hash) pairs from a CCheckpointData map_list_of chain.
 
@@ -344,6 +388,7 @@ def extract(path: Path):
         net = {"_class": class_name,
                "consensus_nodes": {},   # name -> {fields, links, derived_from}
                "checkpoints": [],       # [{height, hash}] sorted by height
+               "chainTxData": None,     # {nTime, nTxCount, dTxRate} — NOT consensus
                "consensus_links": {},   # pLeft/pRight/pConsensusRoot wiring
                "deployments": {},
                "base58Prefixes": {}, "messageStart": {}, "other": {},
@@ -405,6 +450,19 @@ def extract(path: Path):
                                  "pairs matched — structure may have changed"})
                 else:
                     net["checkpoints"] = cps
+                continue
+            # ------------------------------------------------------------------
+
+            # --- chainTxData (fee estimation, not consensus) --------------------
+            if k == "identifier" and lhs["raw"] == "chainTxData":
+                ctd = parse_chaintxdata(rhs["expr"])
+                if ctd is None:
+                    net["_unparsed"].append({
+                        "lhs": lhs["raw"], "rhs": rhs["expr"],
+                        "error": "chainTxData present but did not match "
+                                 "{nTime, nTxCount, dTxRate} shape"})
+                else:
+                    net["chainTxData"] = ctd
                 continue
             # ------------------------------------------------------------------
 

@@ -318,6 +318,11 @@
           "hash": "0xe7d4577405223918491477db725a393bcfc349d8ee63b0a4fde23cbfbfd81dea"
         }
       ],
+      "chainTxData": {
+        "nTime": 1705383360,
+        "nTxCount": 226128837,
+        "dTxRate": 4.23
+      },
       "consensus_links": {
         "root": "digishieldConsensus"
       },
@@ -514,18 +519,9 @@
           "expr": "false",
           "type": "bool",
           "value": false
-        },
-        "chainTxData": {
-          "expr": "ChainTxData{\n            // Data as of block e7d4577405223918491477db725a393bcfc349d8ee63b0a4fde23cbfbfd81dea (height 5050000).\n            // Tx estimate based on average between 2023-01-16 (92752025 at 4556625) and 2024-01-16 (226128837 at 5050000)\n            1705383360, // * UNIX timestamp of last checkpoint block\n            226128837,   // * total number of transactions between genesis and last checkpoint\n                        //   (the tx=... number in the SetBestChain debug.log lines)\n            4.23        // * estimated number of transactions per second after checkpoint\n                        // (226128837 - 92752025) / 31536000 = 4.2293509\n        }",
-          "type": "unparsed"
         }
       },
-      "_unparsed": [
-        {
-          "lhs": "chainTxData",
-          "rhs": "ChainTxData{\n            // Data as of block e7d4577405223918491477db725a393bcfc349d8ee63b0a4fde23cbfbfd81dea (height 5050000).\n            // Tx estimate based on average between 2023-01-16 (92752025 at 4556625) and 2024-01-16 (226128837 at 5050000)\n            1705383360, // * UNIX timestamp of last checkpoint block\n            226128837,   // * total number of transactions between genesis and last checkpoint\n                        //   (the tx=... number in the SetBestChain debug.log lines)\n            4.23        // * estimated number of transactions per second after checkpoint\n                        // (226128837 - 92752025) / 31536000 = 4.2293509\n        }"
-        }
-      ],
+      "_unparsed": [],
       "activation_schedule": [
         {
           "node": "consensus",
@@ -998,6 +994,11 @@
           "hash": "0x199bea6a442310589cbb50a193a30b097c228bd5a0f21af21e4e53dd57c382d3"
         }
       ],
+      "chainTxData": {
+        "nTime": 1703511130,
+        "nTxCount": 7391928,
+        "dTxRate": 0.04
+      },
       "consensus_links": {
         "root": "digishieldConsensus"
       },
@@ -1194,18 +1195,9 @@
           "expr": "false",
           "type": "bool",
           "value": false
-        },
-        "chainTxData": {
-          "expr": "ChainTxData{\n            // Data as of block 199bea6a442310589cbb50a193a30b097c228bd5a0f21af21e4e53dd57c382d3 (height 5,900,000)\n            1703511130, // * UNIX timestamp of last checkpoint block\n            7391928,    // * total number of transactions between genesis and last checkpoint\n            0.04        // * estimated number of transactions per second after that timestamp\n        }",
-          "type": "unparsed"
         }
       },
-      "_unparsed": [
-        {
-          "lhs": "chainTxData",
-          "rhs": "ChainTxData{\n            // Data as of block 199bea6a442310589cbb50a193a30b097c228bd5a0f21af21e4e53dd57c382d3 (height 5,900,000)\n            1703511130, // * UNIX timestamp of last checkpoint block\n            7391928,    // * total number of transactions between genesis and last checkpoint\n            0.04        // * estimated number of transactions per second after that timestamp\n        }"
-        }
-      ],
+      "_unparsed": [],
       "activation_schedule": [
         {
           "node": "consensus",
@@ -1595,6 +1587,11 @@
           "hash": "0x3d2160a3b5dc4a9d62e7e66a295f70313ac808440ef7400d6c0772171ce973a5"
         }
       ],
+      "chainTxData": {
+        "nTime": 0,
+        "nTxCount": 0,
+        "dTxRate": 0.0
+      },
       "consensus_links": {
         "root": "digishieldConsensus"
       },
@@ -1781,18 +1778,9 @@
           "expr": "true",
           "type": "bool",
           "value": true
-        },
-        "chainTxData": {
-          "expr": "ChainTxData{\n            0,\n            0,\n            0\n        }",
-          "type": "unparsed"
         }
       },
-      "_unparsed": [
-        {
-          "lhs": "chainTxData",
-          "rhs": "ChainTxData{\n            0,\n            0,\n            0\n        }"
-        }
-      ],
+      "_unparsed": [],
       "activation_schedule": [
         {
           "node": "consensus",

@@ -183,6 +183,7 @@ A spec that is confidently wrong is worse than no spec.
 | `gen_consensus_c.py` | `spec.json` → C API, epoch tables, tests |
 | `diff_checkpoints.py` | libdogecoin checkpoints vs Core |
 | `regression_gate.py` | pin/check the consensus definition vs Core drift |
+| `compare_specs.py` | semantic spec comparison (ignores paths, not the pin) |
 | `DIRECTIVE.md` | full design doc, findings, phases |
 
 ## License

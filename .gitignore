@@ -17,6 +17,9 @@ src/dogecoin_reject.h
 src/dogecoin_reject.c
 src/test_reject.c
 
+# CI scratch
+*.regen.json
+
 # Build artifacts
 t_bound
 t_exh

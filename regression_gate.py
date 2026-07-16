@@ -61,6 +61,11 @@ def flatten(spec):
         for c in net.get("checkpoints", []):
             flat[f"{p}.checkpoint.{c['height']}"] = c["hash"]
 
+        ctd = net.get("chainTxData")
+        if ctd:
+            for f, v in ctd.items():
+                flat[f"{p}.chainTxData.{f}"] = v
+
     return flat
 
 
