@@ -1,0 +1,1938 @@
+{
+  "_source": "/home/bluezr/source/repos/dogecoin-fresh/src/chainparams.cpp",
+  "_note": "Generated from Dogecoin Core. Core is the source of truth. Do not hand-edit.",
+  "_provenance": {
+    "file_sha256": "150d3733903d05f22e2ce3bc195a65f99ced183e16f2e75f52a72d0df8ec5d9c",
+    "core_commit": "699f62ccba4e9c886a44d578c3923b4e14ef0a08",
+    "core_describe": "v1.14.7-239-g699f62ccba",
+    "core_describe_dirty": "v1.14.7-239-g699f62ccba-dirty",
+    "core_client_version": "1.14.99.0",
+    "core_is_release": false,
+    "core_branch": "HEAD",
+    "core_detached": true,
+    "tree_dirty": true,
+    "file_dirty": false
+  },
+  "networks": {
+    "CMainParams": {
+      "_class": "CMainParams",
+      "consensus_nodes": {
+        "consensus": {
+          "derived_from": null,
+          "fields": {
+            "nSubsidyHalvingInterval": {
+              "expr": "100000",
+              "type": "int",
+              "value": 100000
+            },
+            "nMajorityEnforceBlockUpgrade": {
+              "expr": "1500",
+              "type": "int",
+              "value": 1500
+            },
+            "nMajorityRejectBlockOutdated": {
+              "expr": "1900",
+              "type": "int",
+              "value": 1900
+            },
+            "nMajorityWindow": {
+              "expr": "2000",
+              "type": "int",
+              "value": 2000
+            },
+            "BIP34Height": {
+              "expr": "1034383",
+              "type": "int",
+              "value": 1034383
+            },
+            "BIP34Hash": {
+              "expr": "uint256S(\"0x80d1364201e5df97e696c03bdd24dc885e8617b9de51e453c10a4f629b1e797a\")",
+              "call": "uint256S",
+              "args": [
+                "\"0x80d1364201e5df97e696c03bdd24dc885e8617b9de51e453c10a4f629b1e797a\""
+              ],
+              "type": "hash",
+              "value": "0x80d1364201e5df97e696c03bdd24dc885e8617b9de51e453c10a4f629b1e797a"
+            },
+            "BIP65Height": {
+              "expr": "3464751",
+              "type": "int",
+              "value": 3464751
+            },
+            "BIP66Height": {
+              "expr": "1034383",
+              "type": "int",
+              "value": 1034383
+            },
+            "powLimit": {
+              "expr": "uint256S(\"0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\")",
+              "call": "uint256S",
+              "args": [
+                "\"0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\""
+              ],
+              "type": "hash",
+              "value": "0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+            },
+            "nPowTargetTimespan": {
+              "expr": "4 * 60 * 60",
+              "type": "int",
+              "value": 14400
+            },
+            "nPowTargetSpacing": {
+              "expr": "60",
+              "type": "int",
+              "value": 60
+            },
+            "fDigishieldDifficultyCalculation": {
+              "expr": "false",
+              "type": "bool",
+              "value": false
+            },
+            "nCoinbaseMaturity": {
+              "expr": "30",
+              "type": "int",
+              "value": 30
+            },
+            "fPowAllowMinDifficultyBlocks": {
+              "expr": "false",
+              "type": "bool",
+              "value": false
+            },
+            "fPowAllowDigishieldMinDifficultyBlocks": {
+              "expr": "false",
+              "type": "bool",
+              "value": false
+            },
+            "fPowNoRetargeting": {
+              "expr": "false",
+              "type": "bool",
+              "value": false
+            },
+            "nRuleChangeActivationThreshold": {
+              "expr": "9576",
+              "type": "int",
+              "value": 9576
+            },
+            "nMinerConfirmationWindow": {
+              "expr": "10080",
+              "type": "int",
+              "value": 10080
+            },
+            "nMinimumChainWork": {
+              "expr": "uint256S(\"0x000000000000000000000000000000000000000000000e993d2aa86cf246a49b\")",
+              "call": "uint256S",
+              "args": [
+                "\"0x000000000000000000000000000000000000000000000e993d2aa86cf246a49b\""
+              ],
+              "type": "hash",
+              "value": "0x000000000000000000000000000000000000000000000e993d2aa86cf246a49b"
+            },
+            "defaultAssumeValid": {
+              "expr": "uint256S(\"0xe7d4577405223918491477db725a393bcfc349d8ee63b0a4fde23cbfbfd81dea\")",
+              "call": "uint256S",
+              "args": [
+                "\"0xe7d4577405223918491477db725a393bcfc349d8ee63b0a4fde23cbfbfd81dea\""
+              ],
+              "type": "hash",
+              "value": "0xe7d4577405223918491477db725a393bcfc349d8ee63b0a4fde23cbfbfd81dea"
+            },
+            "nAuxpowChainId": {
+              "expr": "0x0062",
+              "type": "int",
+              "value": 98
+            },
+            "fStrictChainId": {
+              "expr": "true",
+              "type": "bool",
+              "value": true
+            },
+            "fAllowLegacyBlocks": {
+              "expr": "true",
+              "type": "bool",
+              "value": true
+            },
+            "nHeightEffective": {
+              "expr": "0",
+              "type": "int",
+              "value": 0
+            },
+            "hashGenesisBlock": {
+              "expr": "genesis.GetHash()",
+              "call": "genesis.GetHash",
+              "args": [],
+              "type": "call"
+            }
+          },
+          "links": {}
+        },
+        "digishieldConsensus": {
+          "derived_from": "consensus",
+          "fields": {
+            "nHeightEffective": {
+              "expr": "145000",
+              "type": "int",
+              "value": 145000
+            },
+            "fSimplifiedRewards": {
+              "expr": "true",
+              "type": "bool",
+              "value": true
+            },
+            "fDigishieldDifficultyCalculation": {
+              "expr": "true",
+              "type": "bool",
+              "value": true
+            },
+            "nPowTargetTimespan": {
+              "expr": "60",
+              "type": "int",
+              "value": 60
+            },
+            "nCoinbaseMaturity": {
+              "expr": "240",
+              "type": "int",
+              "value": 240
+            },
+            "hashGenesisBlock": {
+              "expr": "consensus.hashGenesisBlock",
+              "type": "unparsed"
+            }
+          },
+          "links": {
+            "pLeft": "consensus",
+            "pRight": "auxpowConsensus"
+          }
+        },
+        "auxpowConsensus": {
+          "derived_from": "digishieldConsensus",
+          "fields": {
+            "nHeightEffective": {
+              "expr": "371337",
+              "type": "int",
+              "value": 371337
+            },
+            "fAllowLegacyBlocks": {
+              "expr": "false",
+              "type": "bool",
+              "value": false
+            },
+            "hashGenesisBlock": {
+              "expr": "consensus.hashGenesisBlock",
+              "type": "unparsed"
+            }
+          },
+          "links": {}
+        }
+      },
+      "checkpoints": [
+        {
+          "height": 0,
+          "hash": "0x1a91e3dace36e2be3bf030a65679fe821aa1d6ef92e7c9902eb318182c355691"
+        },
+        {
+          "height": 104679,
+          "hash": "0x35eb87ae90d44b98898fec8c39577b76cb1eb08e1261cfc10706c8ce9a1d01cf"
+        },
+        {
+          "height": 145000,
+          "hash": "0xcc47cae70d7c5c92828d3214a266331dde59087d4a39071fa76ddfff9b7bde72"
+        },
+        {
+          "height": 371337,
+          "hash": "0x60323982f9c5ff1b5a954eac9dc1269352835f47c2c5222691d80f0d50dcf053"
+        },
+        {
+          "height": 450000,
+          "hash": "0xd279277f8f846a224d776450aa04da3cf978991a182c6f3075db4c48b173bbd7"
+        },
+        {
+          "height": 771275,
+          "hash": "0x1b7d789ed82cbdc640952e7e7a54966c6488a32eaad54fc39dff83f310dbaaed"
+        },
+        {
+          "height": 1000000,
+          "hash": "0x6aae55bea74235f0c80bd066349d4440c31f2d0f27d54265ecd484d8c1d11b47"
+        },
+        {
+          "height": 1250000,
+          "hash": "0x00c7a442055c1a990e11eea5371ca5c1c02a0677b33cc88ec728c45edc4ec060"
+        },
+        {
+          "height": 1500000,
+          "hash": "0xf1d32d6920de7b617d51e74bdf4e58adccaa582ffdc8657464454f16a952fca6"
+        },
+        {
+          "height": 1750000,
+          "hash": "0x5c8e7327984f0d6f59447d89d143e5f6eafc524c82ad95d176c5cec082ae2001"
+        },
+        {
+          "height": 2000000,
+          "hash": "0x9914f0e82e39bbf21950792e8816620d71b9965bdbbc14e72a95e3ab9618fea8"
+        },
+        {
+          "height": 2031142,
+          "hash": "0x893297d89afb7599a3c571ca31a3b80e8353f4cf39872400ad0f57d26c4c5d42"
+        },
+        {
+          "height": 2250000,
+          "hash": "0x0a87a8d4e40dca52763f93812a288741806380cd569537039ee927045c6bc338"
+        },
+        {
+          "height": 2510150,
+          "hash": "0x77e3f4a4bcb4a2c15e8015525e3d15b466f6c022f6ca82698f329edef7d9777e"
+        },
+        {
+          "height": 2750000,
+          "hash": "0xd4f8abb835930d3c4f92ca718aaa09bef545076bd872354e0b2b85deefacf2e3"
+        },
+        {
+          "height": 3000000,
+          "hash": "0x195a83b091fb3ee7ecb56f2e63d01709293f57f971ccf373d93890c8dc1033db"
+        },
+        {
+          "height": 3250000,
+          "hash": "0x7f3e28bf9e309c4b57a4b70aa64d3b2ea5250ae797af84976ddc420d49684034"
+        },
+        {
+          "height": 3500000,
+          "hash": "0xeaa303b93c1c64d2b3a2cdcf6ccf21b10cc36626965cc2619661e8e1879abdfb"
+        },
+        {
+          "height": 3606083,
+          "hash": "0x954c7c66dee51f0a3fb1edb26200b735f5275fe54d9505c76ebd2bcabac36f1e"
+        },
+        {
+          "height": 3854173,
+          "hash": "0xe4b4ecda4c022406c502a247c0525480268ce7abbbef632796e8ca1646425e75"
+        },
+        {
+          "height": 3963597,
+          "hash": "0x2b6927cfaa5e82353d45f02be8aadd3bfd165ece5ce24b9bfa4db20432befb5d"
+        },
+        {
+          "height": 4303965,
+          "hash": "0xed7d266dcbd8bb8af80f9ccb8deb3e18f9cc3f6972912680feeb37b090f8cee0"
+        },
+        {
+          "height": 5050000,
+          "hash": "0xe7d4577405223918491477db725a393bcfc349d8ee63b0a4fde23cbfbfd81dea"
+        }
+      ],
+      "consensus_links": {
+        "root": "digishieldConsensus"
+      },
+      "deployments": {
+        "Consensus::DEPLOYMENT_TESTDUMMY": {
+          "bit": {
+            "expr": "28",
+            "type": "int",
+            "value": 28
+          },
+          "nStartTime": {
+            "expr": "1199145601",
+            "type": "int",
+            "value": 1199145601
+          },
+          "nTimeout": {
+            "expr": "1230767999",
+            "type": "int",
+            "value": 1230767999
+          }
+        },
+        "Consensus::DEPLOYMENT_CSV": {
+          "bit": {
+            "expr": "0",
+            "type": "int",
+            "value": 0
+          },
+          "nStartTime": {
+            "expr": "1462060800",
+            "type": "int",
+            "value": 1462060800
+          },
+          "nTimeout": {
+            "expr": "1493596800",
+            "type": "int",
+            "value": 1493596800
+          }
+        },
+        "Consensus::DEPLOYMENT_SEGWIT": {
+          "bit": {
+            "expr": "1",
+            "type": "int",
+            "value": 1
+          },
+          "nStartTime": {
+            "expr": "1479168000",
+            "type": "int",
+            "value": 1479168000
+          },
+          "nTimeout": {
+            "expr": "0",
+            "type": "int",
+            "value": 0
+          }
+        }
+      },
+      "base58Prefixes": {
+        "PUBKEY_ADDRESS": {
+          "expr": "std::vector<unsigned char>(1,30)",
+          "call": "std::vector<unsigned char>",
+          "args": [
+            "1",
+            "30"
+          ],
+          "type": "byte",
+          "value": 30
+        },
+        "SCRIPT_ADDRESS": {
+          "expr": "std::vector<unsigned char>(1,22)",
+          "call": "std::vector<unsigned char>",
+          "args": [
+            "1",
+            "22"
+          ],
+          "type": "byte",
+          "value": 22
+        },
+        "SECRET_KEY": {
+          "expr": "std::vector<unsigned char>(1,158)",
+          "call": "std::vector<unsigned char>",
+          "args": [
+            "1",
+            "158"
+          ],
+          "type": "byte",
+          "value": 158
+        },
+        "EXT_PUBLIC_KEY": {
+          "expr": "boost::assign::list_of(0x02)(0xfa)(0xca)(0xfd).convert_to_container<std::vector<unsigned char> >()",
+          "type": "bytes",
+          "value": [
+            2,
+            250,
+            202,
+            253
+          ],
+          "note": "boost::assign::list_of"
+        },
+        "EXT_SECRET_KEY": {
+          "expr": "boost::assign::list_of(0x02)(0xfa)(0xc3)(0x98).convert_to_container<std::vector<unsigned char> >()",
+          "type": "bytes",
+          "value": [
+            2,
+            250,
+            195,
+            152
+          ],
+          "note": "boost::assign::list_of"
+        }
+      },
+      "messageStart": {
+        "0": {
+          "expr": "0xc0",
+          "type": "int",
+          "value": 192
+        },
+        "1": {
+          "expr": "0xc0",
+          "type": "int",
+          "value": 192
+        },
+        "2": {
+          "expr": "0xc0",
+          "type": "int",
+          "value": 192
+        },
+        "3": {
+          "expr": "0xc0",
+          "type": "int",
+          "value": 192
+        }
+      },
+      "other": {
+        "strNetworkID": {
+          "expr": "\"main\"",
+          "type": "string",
+          "value": "main"
+        },
+        "nDefaultPort": {
+          "expr": "22556",
+          "type": "int",
+          "value": 22556
+        },
+        "nPruneAfterHeight": {
+          "expr": "100000",
+          "type": "int",
+          "value": 100000
+        },
+        "genesis": {
+          "expr": "CreateGenesisBlock(1386325540, 99943, 0x1e0ffff0, 1, 88 * COIN)",
+          "call": "CreateGenesisBlock",
+          "args": [
+            "1386325540",
+            "99943",
+            "0x1e0ffff0",
+            "1",
+            "88 * COIN"
+          ],
+          "type": "genesis",
+          "fields": {
+            "nTime": "1386325540",
+            "nNonce": "99943",
+            "nBits": "0x1e0ffff0",
+            "nVersion": "1",
+            "genesisReward": "88 * COIN"
+          }
+        },
+        "vFixedSeeds": {
+          "expr": "std::vector<SeedSpec6>(pnSeed6_main, pnSeed6_main + ARRAYLEN(pnSeed6_main))",
+          "call": "std::vector<SeedSpec6>",
+          "args": [
+            "pnSeed6_main",
+            "pnSeed6_main + ARRAYLEN(pnSeed6_main)"
+          ],
+          "type": "byte",
+          "value": null
+        },
+        "fMiningRequiresPeers": {
+          "expr": "true",
+          "type": "bool",
+          "value": true
+        },
+        "fDefaultConsistencyChecks": {
+          "expr": "false",
+          "type": "bool",
+          "value": false
+        },
+        "fRequireStandard": {
+          "expr": "true",
+          "type": "bool",
+          "value": true
+        },
+        "fMineBlocksOnDemand": {
+          "expr": "false",
+          "type": "bool",
+          "value": false
+        },
+        "chainTxData": {
+          "expr": "ChainTxData{\n            // Data as of block e7d4577405223918491477db725a393bcfc349d8ee63b0a4fde23cbfbfd81dea (height 5050000).\n            // Tx estimate based on average between 2023-01-16 (92752025 at 4556625) and 2024-01-16 (226128837 at 5050000)\n            1705383360, // * UNIX timestamp of last checkpoint block\n            226128837,   // * total number of transactions between genesis and last checkpoint\n                        //   (the tx=... number in the SetBestChain debug.log lines)\n            4.23        // * estimated number of transactions per second after checkpoint\n                        // (226128837 - 92752025) / 31536000 = 4.2293509\n        }",
+          "type": "unparsed"
+        }
+      },
+      "_unparsed": [
+        {
+          "lhs": "chainTxData",
+          "rhs": "ChainTxData{\n            // Data as of block e7d4577405223918491477db725a393bcfc349d8ee63b0a4fde23cbfbfd81dea (height 5050000).\n            // Tx estimate based on average between 2023-01-16 (92752025 at 4556625) and 2024-01-16 (226128837 at 5050000)\n            1705383360, // * UNIX timestamp of last checkpoint block\n            226128837,   // * total number of transactions between genesis and last checkpoint\n                        //   (the tx=... number in the SetBestChain debug.log lines)\n            4.23        // * estimated number of transactions per second after checkpoint\n                        // (226128837 - 92752025) / 31536000 = 4.2293509\n        }"
+        }
+      ],
+      "activation_schedule": [
+        {
+          "node": "consensus",
+          "nHeightEffective": 0,
+          "derived_from": null,
+          "links": {},
+          "own_mutations": [
+            "BIP34Hash",
+            "BIP34Height",
+            "BIP65Height",
+            "BIP66Height",
+            "defaultAssumeValid",
+            "fAllowLegacyBlocks",
+            "fDigishieldDifficultyCalculation",
+            "fPowAllowDigishieldMinDifficultyBlocks",
+            "fPowAllowMinDifficultyBlocks",
+            "fPowNoRetargeting",
+            "fStrictChainId",
+            "hashGenesisBlock",
+            "nAuxpowChainId",
+            "nCoinbaseMaturity",
+            "nHeightEffective",
+            "nMajorityEnforceBlockUpgrade",
+            "nMajorityRejectBlockOutdated",
+            "nMajorityWindow",
+            "nMinerConfirmationWindow",
+            "nMinimumChainWork",
+            "nPowTargetSpacing",
+            "nPowTargetTimespan",
+            "nRuleChangeActivationThreshold",
+            "nSubsidyHalvingInterval",
+            "powLimit"
+          ],
+          "effective_fields": {
+            "nSubsidyHalvingInterval": 100000,
+            "nMajorityEnforceBlockUpgrade": 1500,
+            "nMajorityRejectBlockOutdated": 1900,
+            "nMajorityWindow": 2000,
+            "BIP34Height": 1034383,
+            "BIP34Hash": "0x80d1364201e5df97e696c03bdd24dc885e8617b9de51e453c10a4f629b1e797a",
+            "BIP65Height": 3464751,
+            "BIP66Height": 1034383,
+            "powLimit": "0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "nPowTargetTimespan": 14400,
+            "nPowTargetSpacing": 60,
+            "fDigishieldDifficultyCalculation": false,
+            "nCoinbaseMaturity": 30,
+            "fPowAllowMinDifficultyBlocks": false,
+            "fPowAllowDigishieldMinDifficultyBlocks": false,
+            "fPowNoRetargeting": false,
+            "nRuleChangeActivationThreshold": 9576,
+            "nMinerConfirmationWindow": 10080,
+            "nMinimumChainWork": "0x000000000000000000000000000000000000000000000e993d2aa86cf246a49b",
+            "defaultAssumeValid": "0xe7d4577405223918491477db725a393bcfc349d8ee63b0a4fde23cbfbfd81dea",
+            "nAuxpowChainId": 98,
+            "fStrictChainId": true,
+            "fAllowLegacyBlocks": true,
+            "nHeightEffective": 0,
+            "hashGenesisBlock": "genesis.GetHash()"
+          }
+        },
+        {
+          "node": "digishieldConsensus",
+          "nHeightEffective": 145000,
+          "derived_from": "consensus",
+          "links": {
+            "pLeft": "consensus",
+            "pRight": "auxpowConsensus"
+          },
+          "own_mutations": [
+            "fDigishieldDifficultyCalculation",
+            "fSimplifiedRewards",
+            "hashGenesisBlock",
+            "nCoinbaseMaturity",
+            "nHeightEffective",
+            "nPowTargetTimespan"
+          ],
+          "effective_fields": {
+            "nSubsidyHalvingInterval": 100000,
+            "nMajorityEnforceBlockUpgrade": 1500,
+            "nMajorityRejectBlockOutdated": 1900,
+            "nMajorityWindow": 2000,
+            "BIP34Height": 1034383,
+            "BIP34Hash": "0x80d1364201e5df97e696c03bdd24dc885e8617b9de51e453c10a4f629b1e797a",
+            "BIP65Height": 3464751,
+            "BIP66Height": 1034383,
+            "powLimit": "0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "nPowTargetTimespan": 60,
+            "nPowTargetSpacing": 60,
+            "fDigishieldDifficultyCalculation": true,
+            "nCoinbaseMaturity": 240,
+            "fPowAllowMinDifficultyBlocks": false,
+            "fPowAllowDigishieldMinDifficultyBlocks": false,
+            "fPowNoRetargeting": false,
+            "nRuleChangeActivationThreshold": 9576,
+            "nMinerConfirmationWindow": 10080,
+            "nMinimumChainWork": "0x000000000000000000000000000000000000000000000e993d2aa86cf246a49b",
+            "defaultAssumeValid": "0xe7d4577405223918491477db725a393bcfc349d8ee63b0a4fde23cbfbfd81dea",
+            "nAuxpowChainId": 98,
+            "fStrictChainId": true,
+            "fAllowLegacyBlocks": true,
+            "nHeightEffective": 145000,
+            "hashGenesisBlock": "consensus.hashGenesisBlock",
+            "fSimplifiedRewards": true
+          }
+        },
+        {
+          "node": "auxpowConsensus",
+          "nHeightEffective": 371337,
+          "derived_from": "digishieldConsensus",
+          "links": {},
+          "own_mutations": [
+            "fAllowLegacyBlocks",
+            "hashGenesisBlock",
+            "nHeightEffective"
+          ],
+          "effective_fields": {
+            "nSubsidyHalvingInterval": 100000,
+            "nMajorityEnforceBlockUpgrade": 1500,
+            "nMajorityRejectBlockOutdated": 1900,
+            "nMajorityWindow": 2000,
+            "BIP34Height": 1034383,
+            "BIP34Hash": "0x80d1364201e5df97e696c03bdd24dc885e8617b9de51e453c10a4f629b1e797a",
+            "BIP65Height": 3464751,
+            "BIP66Height": 1034383,
+            "powLimit": "0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "nPowTargetTimespan": 60,
+            "nPowTargetSpacing": 60,
+            "fDigishieldDifficultyCalculation": true,
+            "nCoinbaseMaturity": 240,
+            "fPowAllowMinDifficultyBlocks": false,
+            "fPowAllowDigishieldMinDifficultyBlocks": false,
+            "fPowNoRetargeting": false,
+            "nRuleChangeActivationThreshold": 9576,
+            "nMinerConfirmationWindow": 10080,
+            "nMinimumChainWork": "0x000000000000000000000000000000000000000000000e993d2aa86cf246a49b",
+            "defaultAssumeValid": "0xe7d4577405223918491477db725a393bcfc349d8ee63b0a4fde23cbfbfd81dea",
+            "nAuxpowChainId": 98,
+            "fStrictChainId": true,
+            "fAllowLegacyBlocks": false,
+            "nHeightEffective": 371337,
+            "hashGenesisBlock": "consensus.hashGenesisBlock",
+            "fSimplifiedRewards": true
+          }
+        }
+      ]
+    },
+    "CTestNetParams": {
+      "_class": "CTestNetParams",
+      "consensus_nodes": {
+        "consensus": {
+          "derived_from": null,
+          "fields": {
+            "nHeightEffective": {
+              "expr": "0",
+              "type": "int",
+              "value": 0
+            },
+            "nPowTargetTimespan": {
+              "expr": "4 * 60 * 60",
+              "type": "int",
+              "value": 14400
+            },
+            "fDigishieldDifficultyCalculation": {
+              "expr": "false",
+              "type": "bool",
+              "value": false
+            },
+            "nCoinbaseMaturity": {
+              "expr": "30",
+              "type": "int",
+              "value": 30
+            },
+            "fPowAllowMinDifficultyBlocks": {
+              "expr": "true",
+              "type": "bool",
+              "value": true
+            },
+            "fPowAllowDigishieldMinDifficultyBlocks": {
+              "expr": "false",
+              "type": "bool",
+              "value": false
+            },
+            "nSubsidyHalvingInterval": {
+              "expr": "100000",
+              "type": "int",
+              "value": 100000
+            },
+            "nMajorityEnforceBlockUpgrade": {
+              "expr": "501",
+              "type": "int",
+              "value": 501
+            },
+            "nMajorityRejectBlockOutdated": {
+              "expr": "750",
+              "type": "int",
+              "value": 750
+            },
+            "nMajorityWindow": {
+              "expr": "1000",
+              "type": "int",
+              "value": 1000
+            },
+            "BIP34Height": {
+              "expr": "708658",
+              "type": "int",
+              "value": 708658
+            },
+            "BIP34Hash": {
+              "expr": "uint256S(\"0x21b8b97dcdb94caa67c7f8f6dbf22e61e0cfe0e46e1fff3528b22864659e9b38\")",
+              "call": "uint256S",
+              "args": [
+                "\"0x21b8b97dcdb94caa67c7f8f6dbf22e61e0cfe0e46e1fff3528b22864659e9b38\""
+              ],
+              "type": "hash",
+              "value": "0x21b8b97dcdb94caa67c7f8f6dbf22e61e0cfe0e46e1fff3528b22864659e9b38"
+            },
+            "BIP65Height": {
+              "expr": "1854705",
+              "type": "int",
+              "value": 1854705
+            },
+            "BIP66Height": {
+              "expr": "708658",
+              "type": "int",
+              "value": 708658
+            },
+            "powLimit": {
+              "expr": "uint256S(\"0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\")",
+              "call": "uint256S",
+              "args": [
+                "\"0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\""
+              ],
+              "type": "hash",
+              "value": "0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+            },
+            "nPowTargetSpacing": {
+              "expr": "60",
+              "type": "int",
+              "value": 60
+            },
+            "fPowNoRetargeting": {
+              "expr": "false",
+              "type": "bool",
+              "value": false
+            },
+            "nRuleChangeActivationThreshold": {
+              "expr": "2880",
+              "type": "int",
+              "value": 2880
+            },
+            "nMinerConfirmationWindow": {
+              "expr": "10080",
+              "type": "int",
+              "value": 10080
+            },
+            "nMinimumChainWork": {
+              "expr": "uint256S(\"0x00000000000000000000000000000000000000000000000000540f2f62ff9a26\")",
+              "call": "uint256S",
+              "args": [
+                "\"0x00000000000000000000000000000000000000000000000000540f2f62ff9a26\""
+              ],
+              "type": "hash",
+              "value": "0x00000000000000000000000000000000000000000000000000540f2f62ff9a26"
+            },
+            "defaultAssumeValid": {
+              "expr": "uint256S(\"0x199bea6a442310589cbb50a193a30b097c228bd5a0f21af21e4e53dd57c382d3\")",
+              "call": "uint256S",
+              "args": [
+                "\"0x199bea6a442310589cbb50a193a30b097c228bd5a0f21af21e4e53dd57c382d3\""
+              ],
+              "type": "hash",
+              "value": "0x199bea6a442310589cbb50a193a30b097c228bd5a0f21af21e4e53dd57c382d3"
+            },
+            "nAuxpowChainId": {
+              "expr": "0x0062",
+              "type": "int",
+              "value": 98
+            },
+            "fStrictChainId": {
+              "expr": "false",
+              "type": "bool",
+              "value": false
+            },
+            "fAllowLegacyBlocks": {
+              "expr": "true",
+              "type": "bool",
+              "value": true
+            },
+            "hashGenesisBlock": {
+              "expr": "genesis.GetHash()",
+              "call": "genesis.GetHash",
+              "args": [],
+              "type": "call"
+            }
+          },
+          "links": {}
+        },
+        "digishieldConsensus": {
+          "derived_from": "consensus",
+          "fields": {
+            "nHeightEffective": {
+              "expr": "145000",
+              "type": "int",
+              "value": 145000
+            },
+            "nPowTargetTimespan": {
+              "expr": "60",
+              "type": "int",
+              "value": 60
+            },
+            "fDigishieldDifficultyCalculation": {
+              "expr": "true",
+              "type": "bool",
+              "value": true
+            },
+            "fSimplifiedRewards": {
+              "expr": "true",
+              "type": "bool",
+              "value": true
+            },
+            "fPowAllowMinDifficultyBlocks": {
+              "expr": "false",
+              "type": "bool",
+              "value": false
+            },
+            "nCoinbaseMaturity": {
+              "expr": "240",
+              "type": "int",
+              "value": 240
+            },
+            "hashGenesisBlock": {
+              "expr": "consensus.hashGenesisBlock",
+              "type": "unparsed"
+            }
+          },
+          "links": {
+            "pLeft": "consensus",
+            "pRight": "minDifficultyConsensus"
+          }
+        },
+        "minDifficultyConsensus": {
+          "derived_from": "digishieldConsensus",
+          "fields": {
+            "nHeightEffective": {
+              "expr": "157500",
+              "type": "int",
+              "value": 157500
+            },
+            "fPowAllowDigishieldMinDifficultyBlocks": {
+              "expr": "true",
+              "type": "bool",
+              "value": true
+            },
+            "fPowAllowMinDifficultyBlocks": {
+              "expr": "true",
+              "type": "bool",
+              "value": true
+            },
+            "hashGenesisBlock": {
+              "expr": "consensus.hashGenesisBlock",
+              "type": "unparsed"
+            }
+          },
+          "links": {
+            "pRight": "auxpowConsensus"
+          }
+        },
+        "auxpowConsensus": {
+          "derived_from": "minDifficultyConsensus",
+          "fields": {
+            "nHeightEffective": {
+              "expr": "158100",
+              "type": "int",
+              "value": 158100
+            },
+            "fPowAllowDigishieldMinDifficultyBlocks": {
+              "expr": "true",
+              "type": "bool",
+              "value": true
+            },
+            "fAllowLegacyBlocks": {
+              "expr": "false",
+              "type": "bool",
+              "value": false
+            },
+            "hashGenesisBlock": {
+              "expr": "consensus.hashGenesisBlock",
+              "type": "unparsed"
+            }
+          },
+          "links": {}
+        }
+      },
+      "checkpoints": [
+        {
+          "height": 0,
+          "hash": "0xbb0a78264637406b6360aad926284d544d7049f45189db5664f3c4d07350559e"
+        },
+        {
+          "height": 483173,
+          "hash": "0xa804201ca0aceb7e937ef7a3c613a9b7589245b10cc095148c4ce4965b0b73b5"
+        },
+        {
+          "height": 591117,
+          "hash": "0x5f6b93b2c28cedf32467d900369b8be6700f0649388a7dbfd3ebd4a01b1ffad8"
+        },
+        {
+          "height": 658924,
+          "hash": "0xed6c8324d9a77195ee080f225a0fca6346495e08ded99bcda47a8eea5a8a620b"
+        },
+        {
+          "height": 703635,
+          "hash": "0x839fa54617adcd582d53030a37455c14a87a806f6615aa8213f13e196230ff7f"
+        },
+        {
+          "height": 1000000,
+          "hash": "0x1fe4d44ea4d1edb031f52f0d7c635db8190dc871a190654c41d2450086b8ef0e"
+        },
+        {
+          "height": 1202214,
+          "hash": "0xa2179767a87ee4e95944703976fee63578ec04fa3ac2fc1c9c2c83587d096977"
+        },
+        {
+          "height": 1250000,
+          "hash": "0xb46affb421872ca8efa30366b09694e2f9bf077f7258213be14adb05a9f41883"
+        },
+        {
+          "height": 1500000,
+          "hash": "0x0caa041b47b4d18a4f44bdc05cef1a96d5196ce7b2e32ad3e4eb9ba505144917"
+        },
+        {
+          "height": 1750000,
+          "hash": "0x8042462366d854ad39b8b95ed2ca12e89a526ceee5a90042d55ebb24d5aab7e9"
+        },
+        {
+          "height": 2000000,
+          "hash": "0xd6acde73e1b42fc17f29dcc76f63946d378ae1bd4eafab44d801a25be784103c"
+        },
+        {
+          "height": 2250000,
+          "hash": "0xc4342ae6d9a522a02e5607411df1b00e9329563ef844a758d762d601d42c86dc"
+        },
+        {
+          "height": 2500000,
+          "hash": "0x3a66ec4933fbb348c9b1889aaf2f732fe429fd9a8f74fee6895eae061ac897e2"
+        },
+        {
+          "height": 2750000,
+          "hash": "0x473ea9f625d59f534ffcc9738ffc58f7b7b1e0e993078614f5484a9505885563"
+        },
+        {
+          "height": 3062910,
+          "hash": "0x113c41c00934f940a41f99d18b2ad9aefd183a4b7fe80527e1e6c12779bd0246"
+        },
+        {
+          "height": 3286675,
+          "hash": "0x07fef07a255d510297c9189dc96da5f4e41a8184bc979df8294487f07fee1cf3"
+        },
+        {
+          "height": 3445426,
+          "hash": "0x70574db7856bd685abe7b0a8a3e79b29882620645bd763b01459176bceb58cd1"
+        },
+        {
+          "height": 3976284,
+          "hash": "0xaf23c3e750bb4f2ce091235f006e7e4e2af453d4c866282e7870471dcfeb4382"
+        },
+        {
+          "height": 5900000,
+          "hash": "0x199bea6a442310589cbb50a193a30b097c228bd5a0f21af21e4e53dd57c382d3"
+        }
+      ],
+      "consensus_links": {
+        "root": "digishieldConsensus"
+      },
+      "deployments": {
+        "Consensus::DEPLOYMENT_TESTDUMMY": {
+          "bit": {
+            "expr": "28",
+            "type": "int",
+            "value": 28
+          },
+          "nStartTime": {
+            "expr": "1199145601",
+            "type": "int",
+            "value": 1199145601
+          },
+          "nTimeout": {
+            "expr": "1230767999",
+            "type": "int",
+            "value": 1230767999
+          }
+        },
+        "Consensus::DEPLOYMENT_CSV": {
+          "bit": {
+            "expr": "0",
+            "type": "int",
+            "value": 0
+          },
+          "nStartTime": {
+            "expr": "1456790400",
+            "type": "int",
+            "value": 1456790400
+          },
+          "nTimeout": {
+            "expr": "1493596800",
+            "type": "int",
+            "value": 1493596800
+          }
+        },
+        "Consensus::DEPLOYMENT_SEGWIT": {
+          "bit": {
+            "expr": "1",
+            "type": "int",
+            "value": 1
+          },
+          "nStartTime": {
+            "expr": "1462060800",
+            "type": "int",
+            "value": 1462060800
+          },
+          "nTimeout": {
+            "expr": "0",
+            "type": "int",
+            "value": 0
+          }
+        }
+      },
+      "base58Prefixes": {
+        "PUBKEY_ADDRESS": {
+          "expr": "std::vector<unsigned char>(1,113)",
+          "call": "std::vector<unsigned char>",
+          "args": [
+            "1",
+            "113"
+          ],
+          "type": "byte",
+          "value": 113
+        },
+        "SCRIPT_ADDRESS": {
+          "expr": "std::vector<unsigned char>(1,196)",
+          "call": "std::vector<unsigned char>",
+          "args": [
+            "1",
+            "196"
+          ],
+          "type": "byte",
+          "value": 196
+        },
+        "SECRET_KEY": {
+          "expr": "std::vector<unsigned char>(1,241)",
+          "call": "std::vector<unsigned char>",
+          "args": [
+            "1",
+            "241"
+          ],
+          "type": "byte",
+          "value": 241
+        },
+        "EXT_PUBLIC_KEY": {
+          "expr": "boost::assign::list_of(0x04)(0x35)(0x87)(0xcf).convert_to_container<std::vector<unsigned char> >()",
+          "type": "bytes",
+          "value": [
+            4,
+            53,
+            135,
+            207
+          ],
+          "note": "boost::assign::list_of"
+        },
+        "EXT_SECRET_KEY": {
+          "expr": "boost::assign::list_of(0x04)(0x35)(0x83)(0x94).convert_to_container<std::vector<unsigned char> >()",
+          "type": "bytes",
+          "value": [
+            4,
+            53,
+            131,
+            148
+          ],
+          "note": "boost::assign::list_of"
+        }
+      },
+      "messageStart": {
+        "0": {
+          "expr": "0xfc",
+          "type": "int",
+          "value": 252
+        },
+        "1": {
+          "expr": "0xc1",
+          "type": "int",
+          "value": 193
+        },
+        "2": {
+          "expr": "0xb7",
+          "type": "int",
+          "value": 183
+        },
+        "3": {
+          "expr": "0xdc",
+          "type": "int",
+          "value": 220
+        }
+      },
+      "other": {
+        "strNetworkID": {
+          "expr": "\"test\"",
+          "type": "string",
+          "value": "test"
+        },
+        "nDefaultPort": {
+          "expr": "44556",
+          "type": "int",
+          "value": 44556
+        },
+        "nPruneAfterHeight": {
+          "expr": "1000",
+          "type": "int",
+          "value": 1000
+        },
+        "genesis": {
+          "expr": "CreateGenesisBlock(1391503289, 997879, 0x1e0ffff0, 1, 88 * COIN)",
+          "call": "CreateGenesisBlock",
+          "args": [
+            "1391503289",
+            "997879",
+            "0x1e0ffff0",
+            "1",
+            "88 * COIN"
+          ],
+          "type": "genesis",
+          "fields": {
+            "nTime": "1391503289",
+            "nNonce": "997879",
+            "nBits": "0x1e0ffff0",
+            "nVersion": "1",
+            "genesisReward": "88 * COIN"
+          }
+        },
+        "vFixedSeeds": {
+          "expr": "std::vector<SeedSpec6>(pnSeed6_test, pnSeed6_test + ARRAYLEN(pnSeed6_test))",
+          "call": "std::vector<SeedSpec6>",
+          "args": [
+            "pnSeed6_test",
+            "pnSeed6_test + ARRAYLEN(pnSeed6_test)"
+          ],
+          "type": "byte",
+          "value": null
+        },
+        "fMiningRequiresPeers": {
+          "expr": "true",
+          "type": "bool",
+          "value": true
+        },
+        "fDefaultConsistencyChecks": {
+          "expr": "false",
+          "type": "bool",
+          "value": false
+        },
+        "fRequireStandard": {
+          "expr": "false",
+          "type": "bool",
+          "value": false
+        },
+        "fMineBlocksOnDemand": {
+          "expr": "false",
+          "type": "bool",
+          "value": false
+        },
+        "chainTxData": {
+          "expr": "ChainTxData{\n            // Data as of block 199bea6a442310589cbb50a193a30b097c228bd5a0f21af21e4e53dd57c382d3 (height 5,900,000)\n            1703511130, // * UNIX timestamp of last checkpoint block\n            7391928,    // * total number of transactions between genesis and last checkpoint\n            0.04        // * estimated number of transactions per second after that timestamp\n        }",
+          "type": "unparsed"
+        }
+      },
+      "_unparsed": [
+        {
+          "lhs": "chainTxData",
+          "rhs": "ChainTxData{\n            // Data as of block 199bea6a442310589cbb50a193a30b097c228bd5a0f21af21e4e53dd57c382d3 (height 5,900,000)\n            1703511130, // * UNIX timestamp of last checkpoint block\n            7391928,    // * total number of transactions between genesis and last checkpoint\n            0.04        // * estimated number of transactions per second after that timestamp\n        }"
+        }
+      ],
+      "activation_schedule": [
+        {
+          "node": "consensus",
+          "nHeightEffective": 0,
+          "derived_from": null,
+          "links": {},
+          "own_mutations": [
+            "BIP34Hash",
+            "BIP34Height",
+            "BIP65Height",
+            "BIP66Height",
+            "defaultAssumeValid",
+            "fAllowLegacyBlocks",
+            "fDigishieldDifficultyCalculation",
+            "fPowAllowDigishieldMinDifficultyBlocks",
+            "fPowAllowMinDifficultyBlocks",
+            "fPowNoRetargeting",
+            "fStrictChainId",
+            "hashGenesisBlock",
+            "nAuxpowChainId",
+            "nCoinbaseMaturity",
+            "nHeightEffective",
+            "nMajorityEnforceBlockUpgrade",
+            "nMajorityRejectBlockOutdated",
+            "nMajorityWindow",
+            "nMinerConfirmationWindow",
+            "nMinimumChainWork",
+            "nPowTargetSpacing",
+            "nPowTargetTimespan",
+            "nRuleChangeActivationThreshold",
+            "nSubsidyHalvingInterval",
+            "powLimit"
+          ],
+          "effective_fields": {
+            "nHeightEffective": 0,
+            "nPowTargetTimespan": 14400,
+            "fDigishieldDifficultyCalculation": false,
+            "nCoinbaseMaturity": 30,
+            "fPowAllowMinDifficultyBlocks": true,
+            "fPowAllowDigishieldMinDifficultyBlocks": false,
+            "nSubsidyHalvingInterval": 100000,
+            "nMajorityEnforceBlockUpgrade": 501,
+            "nMajorityRejectBlockOutdated": 750,
+            "nMajorityWindow": 1000,
+            "BIP34Height": 708658,
+            "BIP34Hash": "0x21b8b97dcdb94caa67c7f8f6dbf22e61e0cfe0e46e1fff3528b22864659e9b38",
+            "BIP65Height": 1854705,
+            "BIP66Height": 708658,
+            "powLimit": "0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "nPowTargetSpacing": 60,
+            "fPowNoRetargeting": false,
+            "nRuleChangeActivationThreshold": 2880,
+            "nMinerConfirmationWindow": 10080,
+            "nMinimumChainWork": "0x00000000000000000000000000000000000000000000000000540f2f62ff9a26",
+            "defaultAssumeValid": "0x199bea6a442310589cbb50a193a30b097c228bd5a0f21af21e4e53dd57c382d3",
+            "nAuxpowChainId": 98,
+            "fStrictChainId": false,
+            "fAllowLegacyBlocks": true,
+            "hashGenesisBlock": "genesis.GetHash()"
+          }
+        },
+        {
+          "node": "digishieldConsensus",
+          "nHeightEffective": 145000,
+          "derived_from": "consensus",
+          "links": {
+            "pLeft": "consensus",
+            "pRight": "minDifficultyConsensus"
+          },
+          "own_mutations": [
+            "fDigishieldDifficultyCalculation",
+            "fPowAllowMinDifficultyBlocks",
+            "fSimplifiedRewards",
+            "hashGenesisBlock",
+            "nCoinbaseMaturity",
+            "nHeightEffective",
+            "nPowTargetTimespan"
+          ],
+          "effective_fields": {
+            "nHeightEffective": 145000,
+            "nPowTargetTimespan": 60,
+            "fDigishieldDifficultyCalculation": true,
+            "nCoinbaseMaturity": 240,
+            "fPowAllowMinDifficultyBlocks": false,
+            "fPowAllowDigishieldMinDifficultyBlocks": false,
+            "nSubsidyHalvingInterval": 100000,
+            "nMajorityEnforceBlockUpgrade": 501,
+            "nMajorityRejectBlockOutdated": 750,
+            "nMajorityWindow": 1000,
+            "BIP34Height": 708658,
+            "BIP34Hash": "0x21b8b97dcdb94caa67c7f8f6dbf22e61e0cfe0e46e1fff3528b22864659e9b38",
+            "BIP65Height": 1854705,
+            "BIP66Height": 708658,
+            "powLimit": "0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "nPowTargetSpacing": 60,
+            "fPowNoRetargeting": false,
+            "nRuleChangeActivationThreshold": 2880,
+            "nMinerConfirmationWindow": 10080,
+            "nMinimumChainWork": "0x00000000000000000000000000000000000000000000000000540f2f62ff9a26",
+            "defaultAssumeValid": "0x199bea6a442310589cbb50a193a30b097c228bd5a0f21af21e4e53dd57c382d3",
+            "nAuxpowChainId": 98,
+            "fStrictChainId": false,
+            "fAllowLegacyBlocks": true,
+            "hashGenesisBlock": "consensus.hashGenesisBlock",
+            "fSimplifiedRewards": true
+          }
+        },
+        {
+          "node": "minDifficultyConsensus",
+          "nHeightEffective": 157500,
+          "derived_from": "digishieldConsensus",
+          "links": {
+            "pRight": "auxpowConsensus"
+          },
+          "own_mutations": [
+            "fPowAllowDigishieldMinDifficultyBlocks",
+            "fPowAllowMinDifficultyBlocks",
+            "hashGenesisBlock",
+            "nHeightEffective"
+          ],
+          "effective_fields": {
+            "nHeightEffective": 157500,
+            "nPowTargetTimespan": 60,
+            "fDigishieldDifficultyCalculation": true,
+            "nCoinbaseMaturity": 240,
+            "fPowAllowMinDifficultyBlocks": true,
+            "fPowAllowDigishieldMinDifficultyBlocks": true,
+            "nSubsidyHalvingInterval": 100000,
+            "nMajorityEnforceBlockUpgrade": 501,
+            "nMajorityRejectBlockOutdated": 750,
+            "nMajorityWindow": 1000,
+            "BIP34Height": 708658,
+            "BIP34Hash": "0x21b8b97dcdb94caa67c7f8f6dbf22e61e0cfe0e46e1fff3528b22864659e9b38",
+            "BIP65Height": 1854705,
+            "BIP66Height": 708658,
+            "powLimit": "0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "nPowTargetSpacing": 60,
+            "fPowNoRetargeting": false,
+            "nRuleChangeActivationThreshold": 2880,
+            "nMinerConfirmationWindow": 10080,
+            "nMinimumChainWork": "0x00000000000000000000000000000000000000000000000000540f2f62ff9a26",
+            "defaultAssumeValid": "0x199bea6a442310589cbb50a193a30b097c228bd5a0f21af21e4e53dd57c382d3",
+            "nAuxpowChainId": 98,
+            "fStrictChainId": false,
+            "fAllowLegacyBlocks": true,
+            "hashGenesisBlock": "consensus.hashGenesisBlock",
+            "fSimplifiedRewards": true
+          }
+        },
+        {
+          "node": "auxpowConsensus",
+          "nHeightEffective": 158100,
+          "derived_from": "minDifficultyConsensus",
+          "links": {},
+          "own_mutations": [
+            "fAllowLegacyBlocks",
+            "fPowAllowDigishieldMinDifficultyBlocks",
+            "hashGenesisBlock",
+            "nHeightEffective"
+          ],
+          "effective_fields": {
+            "nHeightEffective": 158100,
+            "nPowTargetTimespan": 60,
+            "fDigishieldDifficultyCalculation": true,
+            "nCoinbaseMaturity": 240,
+            "fPowAllowMinDifficultyBlocks": true,
+            "fPowAllowDigishieldMinDifficultyBlocks": true,
+            "nSubsidyHalvingInterval": 100000,
+            "nMajorityEnforceBlockUpgrade": 501,
+            "nMajorityRejectBlockOutdated": 750,
+            "nMajorityWindow": 1000,
+            "BIP34Height": 708658,
+            "BIP34Hash": "0x21b8b97dcdb94caa67c7f8f6dbf22e61e0cfe0e46e1fff3528b22864659e9b38",
+            "BIP65Height": 1854705,
+            "BIP66Height": 708658,
+            "powLimit": "0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "nPowTargetSpacing": 60,
+            "fPowNoRetargeting": false,
+            "nRuleChangeActivationThreshold": 2880,
+            "nMinerConfirmationWindow": 10080,
+            "nMinimumChainWork": "0x00000000000000000000000000000000000000000000000000540f2f62ff9a26",
+            "defaultAssumeValid": "0x199bea6a442310589cbb50a193a30b097c228bd5a0f21af21e4e53dd57c382d3",
+            "nAuxpowChainId": 98,
+            "fStrictChainId": false,
+            "fAllowLegacyBlocks": false,
+            "hashGenesisBlock": "consensus.hashGenesisBlock",
+            "fSimplifiedRewards": true
+          }
+        }
+      ]
+    },
+    "CRegTestParams": {
+      "_class": "CRegTestParams",
+      "consensus_nodes": {
+        "consensus": {
+          "derived_from": null,
+          "fields": {
+            "nSubsidyHalvingInterval": {
+              "expr": "150",
+              "type": "int",
+              "value": 150
+            },
+            "nMajorityEnforceBlockUpgrade": {
+              "expr": "750",
+              "type": "int",
+              "value": 750
+            },
+            "nMajorityRejectBlockOutdated": {
+              "expr": "950",
+              "type": "int",
+              "value": 950
+            },
+            "nMajorityWindow": {
+              "expr": "1000",
+              "type": "int",
+              "value": 1000
+            },
+            "BIP34Height": {
+              "expr": "100000000",
+              "type": "int",
+              "value": 100000000
+            },
+            "BIP34Hash": {
+              "expr": "uint256()",
+              "call": "uint256",
+              "args": [],
+              "type": "call"
+            },
+            "BIP65Height": {
+              "expr": "1351",
+              "type": "int",
+              "value": 1351
+            },
+            "BIP66Height": {
+              "expr": "1251",
+              "type": "int",
+              "value": 1251
+            },
+            "powLimit": {
+              "expr": "uint256S(\"0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\")",
+              "call": "uint256S",
+              "args": [
+                "\"0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\""
+              ],
+              "type": "hash",
+              "value": "0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+            },
+            "nPowTargetTimespan": {
+              "expr": "4 * 60 * 60",
+              "type": "int",
+              "value": 14400
+            },
+            "nPowTargetSpacing": {
+              "expr": "1",
+              "type": "int",
+              "value": 1
+            },
+            "fDigishieldDifficultyCalculation": {
+              "expr": "false",
+              "type": "bool",
+              "value": false
+            },
+            "fPowAllowMinDifficultyBlocks": {
+              "expr": "true",
+              "type": "bool",
+              "value": true
+            },
+            "fPowNoRetargeting": {
+              "expr": "true",
+              "type": "bool",
+              "value": true
+            },
+            "nRuleChangeActivationThreshold": {
+              "expr": "540",
+              "type": "int",
+              "value": 540
+            },
+            "nMinerConfirmationWindow": {
+              "expr": "720",
+              "type": "int",
+              "value": 720
+            },
+            "nMinimumChainWork": {
+              "expr": "uint256S(\"0x00\")",
+              "call": "uint256S",
+              "args": [
+                "\"0x00\""
+              ],
+              "type": "hash",
+              "value": "0x00"
+            },
+            "defaultAssumeValid": {
+              "expr": "uint256S(\"0x00\")",
+              "call": "uint256S",
+              "args": [
+                "\"0x00\""
+              ],
+              "type": "hash",
+              "value": "0x00"
+            },
+            "nAuxpowChainId": {
+              "expr": "0x0062",
+              "type": "int",
+              "value": 98
+            },
+            "fStrictChainId": {
+              "expr": "true",
+              "type": "bool",
+              "value": true
+            },
+            "fAllowLegacyBlocks": {
+              "expr": "true",
+              "type": "bool",
+              "value": true
+            },
+            "fSimplifiedRewards": {
+              "expr": "true",
+              "type": "bool",
+              "value": true
+            },
+            "nCoinbaseMaturity": {
+              "expr": "60",
+              "type": "int",
+              "value": 60
+            },
+            "hashGenesisBlock": {
+              "expr": "genesis.GetHash()",
+              "call": "genesis.GetHash",
+              "args": [],
+              "type": "call"
+            }
+          },
+          "links": {}
+        },
+        "digishieldConsensus": {
+          "derived_from": "consensus",
+          "fields": {
+            "nHeightEffective": {
+              "expr": "10",
+              "type": "int",
+              "value": 10
+            },
+            "nPowTargetTimespan": {
+              "expr": "1",
+              "type": "int",
+              "value": 1
+            },
+            "fDigishieldDifficultyCalculation": {
+              "expr": "true",
+              "type": "bool",
+              "value": true
+            },
+            "hashGenesisBlock": {
+              "expr": "consensus.hashGenesisBlock",
+              "type": "unparsed"
+            }
+          },
+          "links": {
+            "pLeft": "consensus",
+            "pRight": "auxpowConsensus"
+          }
+        },
+        "auxpowConsensus": {
+          "derived_from": "digishieldConsensus",
+          "fields": {
+            "fAllowLegacyBlocks": {
+              "expr": "false",
+              "type": "bool",
+              "value": false
+            },
+            "nHeightEffective": {
+              "expr": "20",
+              "type": "int",
+              "value": 20
+            },
+            "hashGenesisBlock": {
+              "expr": "consensus.hashGenesisBlock",
+              "type": "unparsed"
+            }
+          },
+          "links": {}
+        }
+      },
+      "checkpoints": [
+        {
+          "height": 0,
+          "hash": "0x3d2160a3b5dc4a9d62e7e66a295f70313ac808440ef7400d6c0772171ce973a5"
+        }
+      ],
+      "consensus_links": {
+        "root": "digishieldConsensus"
+      },
+      "deployments": {
+        "Consensus::DEPLOYMENT_TESTDUMMY": {
+          "bit": {
+            "expr": "28",
+            "type": "int",
+            "value": 28
+          },
+          "nStartTime": {
+            "expr": "0",
+            "type": "int",
+            "value": 0
+          },
+          "nTimeout": {
+            "expr": "999999999999ULL",
+            "type": "int",
+            "value": 999999999999
+          }
+        },
+        "Consensus::DEPLOYMENT_CSV": {
+          "bit": {
+            "expr": "0",
+            "type": "int",
+            "value": 0
+          },
+          "nStartTime": {
+            "expr": "0",
+            "type": "int",
+            "value": 0
+          },
+          "nTimeout": {
+            "expr": "999999999999ULL",
+            "type": "int",
+            "value": 999999999999
+          }
+        },
+        "Consensus::DEPLOYMENT_SEGWIT": {
+          "bit": {
+            "expr": "1",
+            "type": "int",
+            "value": 1
+          },
+          "nStartTime": {
+            "expr": "0",
+            "type": "int",
+            "value": 0
+          },
+          "nTimeout": {
+            "expr": "999999999999ULL",
+            "type": "int",
+            "value": 999999999999
+          }
+        }
+      },
+      "base58Prefixes": {
+        "PUBKEY_ADDRESS": {
+          "expr": "std::vector<unsigned char>(1,111)",
+          "call": "std::vector<unsigned char>",
+          "args": [
+            "1",
+            "111"
+          ],
+          "type": "byte",
+          "value": 111
+        },
+        "SCRIPT_ADDRESS": {
+          "expr": "std::vector<unsigned char>(1,196)",
+          "call": "std::vector<unsigned char>",
+          "args": [
+            "1",
+            "196"
+          ],
+          "type": "byte",
+          "value": 196
+        },
+        "SECRET_KEY": {
+          "expr": "std::vector<unsigned char>(1,239)",
+          "call": "std::vector<unsigned char>",
+          "args": [
+            "1",
+            "239"
+          ],
+          "type": "byte",
+          "value": 239
+        },
+        "EXT_PUBLIC_KEY": {
+          "expr": "boost::assign::list_of(0x04)(0x35)(0x87)(0xCF).convert_to_container<std::vector<unsigned char> >()",
+          "type": "bytes",
+          "value": [
+            4,
+            53,
+            135,
+            207
+          ],
+          "note": "boost::assign::list_of"
+        },
+        "EXT_SECRET_KEY": {
+          "expr": "boost::assign::list_of(0x04)(0x35)(0x83)(0x94).convert_to_container<std::vector<unsigned char> >()",
+          "type": "bytes",
+          "value": [
+            4,
+            53,
+            131,
+            148
+          ],
+          "note": "boost::assign::list_of"
+        }
+      },
+      "messageStart": {
+        "0": {
+          "expr": "0xfa",
+          "type": "int",
+          "value": 250
+        },
+        "1": {
+          "expr": "0xbf",
+          "type": "int",
+          "value": 191
+        },
+        "2": {
+          "expr": "0xb5",
+          "type": "int",
+          "value": 181
+        },
+        "3": {
+          "expr": "0xda",
+          "type": "int",
+          "value": 218
+        }
+      },
+      "other": {
+        "strNetworkID": {
+          "expr": "\"regtest\"",
+          "type": "string",
+          "value": "regtest"
+        },
+        "nDefaultPort": {
+          "expr": "18444",
+          "type": "int",
+          "value": 18444
+        },
+        "nPruneAfterHeight": {
+          "expr": "1000",
+          "type": "int",
+          "value": 1000
+        },
+        "genesis": {
+          "expr": "CreateGenesisBlock(1296688602, 2, 0x207fffff, 1, 88 * COIN)",
+          "call": "CreateGenesisBlock",
+          "args": [
+            "1296688602",
+            "2",
+            "0x207fffff",
+            "1",
+            "88 * COIN"
+          ],
+          "type": "genesis",
+          "fields": {
+            "nTime": "1296688602",
+            "nNonce": "2",
+            "nBits": "0x207fffff",
+            "nVersion": "1",
+            "genesisReward": "88 * COIN"
+          }
+        },
+        "fMiningRequiresPeers": {
+          "expr": "false",
+          "type": "bool",
+          "value": false
+        },
+        "fDefaultConsistencyChecks": {
+          "expr": "true",
+          "type": "bool",
+          "value": true
+        },
+        "fRequireStandard": {
+          "expr": "false",
+          "type": "bool",
+          "value": false
+        },
+        "fMineBlocksOnDemand": {
+          "expr": "true",
+          "type": "bool",
+          "value": true
+        },
+        "chainTxData": {
+          "expr": "ChainTxData{\n            0,\n            0,\n            0\n        }",
+          "type": "unparsed"
+        }
+      },
+      "_unparsed": [
+        {
+          "lhs": "chainTxData",
+          "rhs": "ChainTxData{\n            0,\n            0,\n            0\n        }"
+        }
+      ],
+      "activation_schedule": [
+        {
+          "node": "consensus",
+          "nHeightEffective": 0,
+          "derived_from": null,
+          "links": {},
+          "own_mutations": [
+            "BIP34Hash",
+            "BIP34Height",
+            "BIP65Height",
+            "BIP66Height",
+            "defaultAssumeValid",
+            "fAllowLegacyBlocks",
+            "fDigishieldDifficultyCalculation",
+            "fPowAllowMinDifficultyBlocks",
+            "fPowNoRetargeting",
+            "fSimplifiedRewards",
+            "fStrictChainId",
+            "hashGenesisBlock",
+            "nAuxpowChainId",
+            "nCoinbaseMaturity",
+            "nMajorityEnforceBlockUpgrade",
+            "nMajorityRejectBlockOutdated",
+            "nMajorityWindow",
+            "nMinerConfirmationWindow",
+            "nMinimumChainWork",
+            "nPowTargetSpacing",
+            "nPowTargetTimespan",
+            "nRuleChangeActivationThreshold",
+            "nSubsidyHalvingInterval",
+            "powLimit"
+          ],
+          "effective_fields": {
+            "nSubsidyHalvingInterval": 150,
+            "nMajorityEnforceBlockUpgrade": 750,
+            "nMajorityRejectBlockOutdated": 950,
+            "nMajorityWindow": 1000,
+            "BIP34Height": 100000000,
+            "BIP34Hash": "uint256()",
+            "BIP65Height": 1351,
+            "BIP66Height": 1251,
+            "powLimit": "0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "nPowTargetTimespan": 14400,
+            "nPowTargetSpacing": 1,
+            "fDigishieldDifficultyCalculation": false,
+            "fPowAllowMinDifficultyBlocks": true,
+            "fPowNoRetargeting": true,
+            "nRuleChangeActivationThreshold": 540,
+            "nMinerConfirmationWindow": 720,
+            "nMinimumChainWork": "0x00",
+            "defaultAssumeValid": "0x00",
+            "nAuxpowChainId": 98,
+            "fStrictChainId": true,
+            "fAllowLegacyBlocks": true,
+            "fSimplifiedRewards": true,
+            "nCoinbaseMaturity": 60,
+            "hashGenesisBlock": "genesis.GetHash()"
+          }
+        },
+        {
+          "node": "digishieldConsensus",
+          "nHeightEffective": 10,
+          "derived_from": "consensus",
+          "links": {
+            "pLeft": "consensus",
+            "pRight": "auxpowConsensus"
+          },
+          "own_mutations": [
+            "fDigishieldDifficultyCalculation",
+            "hashGenesisBlock",
+            "nHeightEffective",
+            "nPowTargetTimespan"
+          ],
+          "effective_fields": {
+            "nSubsidyHalvingInterval": 150,
+            "nMajorityEnforceBlockUpgrade": 750,
+            "nMajorityRejectBlockOutdated": 950,
+            "nMajorityWindow": 1000,
+            "BIP34Height": 100000000,
+            "BIP34Hash": "uint256()",
+            "BIP65Height": 1351,
+            "BIP66Height": 1251,
+            "powLimit": "0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "nPowTargetTimespan": 1,
+            "nPowTargetSpacing": 1,
+            "fDigishieldDifficultyCalculation": true,
+            "fPowAllowMinDifficultyBlocks": true,
+            "fPowNoRetargeting": true,
+            "nRuleChangeActivationThreshold": 540,
+            "nMinerConfirmationWindow": 720,
+            "nMinimumChainWork": "0x00",
+            "defaultAssumeValid": "0x00",
+            "nAuxpowChainId": 98,
+            "fStrictChainId": true,
+            "fAllowLegacyBlocks": true,
+            "fSimplifiedRewards": true,
+            "nCoinbaseMaturity": 60,
+            "hashGenesisBlock": "consensus.hashGenesisBlock",
+            "nHeightEffective": 10
+          }
+        },
+        {
+          "node": "auxpowConsensus",
+          "nHeightEffective": 20,
+          "derived_from": "digishieldConsensus",
+          "links": {},
+          "own_mutations": [
+            "fAllowLegacyBlocks",
+            "hashGenesisBlock",
+            "nHeightEffective"
+          ],
+          "effective_fields": {
+            "nSubsidyHalvingInterval": 150,
+            "nMajorityEnforceBlockUpgrade": 750,
+            "nMajorityRejectBlockOutdated": 950,
+            "nMajorityWindow": 1000,
+            "BIP34Height": 100000000,
+            "BIP34Hash": "uint256()",
+            "BIP65Height": 1351,
+            "BIP66Height": 1251,
+            "powLimit": "0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "nPowTargetTimespan": 1,
+            "nPowTargetSpacing": 1,
+            "fDigishieldDifficultyCalculation": true,
+            "fPowAllowMinDifficultyBlocks": true,
+            "fPowNoRetargeting": true,
+            "nRuleChangeActivationThreshold": 540,
+            "nMinerConfirmationWindow": 720,
+            "nMinimumChainWork": "0x00",
+            "defaultAssumeValid": "0x00",
+            "nAuxpowChainId": 98,
+            "fStrictChainId": true,
+            "fAllowLegacyBlocks": false,
+            "fSimplifiedRewards": true,
+            "nCoinbaseMaturity": 60,
+            "hashGenesisBlock": "consensus.hashGenesisBlock",
+            "nHeightEffective": 20
+          }
+        }
+      ]
+    }
+  }
+}

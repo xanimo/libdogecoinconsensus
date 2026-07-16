@@ -1,0 +1,27 @@
+# Generated C sources.
+#
+# NOT committed by default: spec.json + the generators are the source of truth,
+# and a committed copy can go stale silently. The tradeoff is that the library
+# isn't readable on GitHub and CI needs a Core checkout.
+#
+# If you'd rather commit them (auditable, diffable in review), delete this block
+# and add a CI check that regeneration produces no diff. See README.
+src/dogecoin_consensus.h
+src/dogecoin_consensus.c
+src/test_consensus.c
+src/test_consensus_exhaustive.c
+
+# Build artifacts
+t_bound
+t_exh
+*.o
+*.a
+*.so
+/build/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+COMMIT_MSG.txt
