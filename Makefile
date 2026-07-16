@@ -63,7 +63,7 @@ spec: spec.json
 verify: spec.json
 	./verify_selection.py spec.json
 
-$(GENERATED): spec.json
+$(GENERATED): spec.json gen_consensus_c.py verify_selection.py
 	./verify_selection.py spec.json
 	./gen_consensus_c.py spec.json -o $(SRC)/
 

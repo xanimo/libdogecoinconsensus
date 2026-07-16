@@ -59,6 +59,37 @@ CHAINS = {
 }
 
 
+def deployment_names(spec):
+    """Deployment short names, in a stable order, validated across chains.
+
+    Core indexes vDeployments by enum, so every chain must agree on the set --
+    a chain missing one, or an extra one somewhere, means the enum changed and
+    the generated indices would be wrong. Raise rather than emit a table whose
+    indices silently disagree with Core's."""
+    per_chain = {}
+    for cls, net in spec["networks"].items():
+        names = {d.split("::")[-1].replace("DEPLOYMENT_", "")
+                 for d in net.get("deployments", {})}
+        per_chain[cls] = names
+    if not per_chain:
+        return []
+    sets = list(per_chain.values())
+    if any(s != sets[0] for s in sets):
+        detail = "; ".join(f"{c}: {sorted(n)}" for c, n in per_chain.items())
+        raise SystemExit(
+            "error: chains disagree on the deployment set — "
+            "generated enum indices would not match Core.\n       " + detail)
+    # order by bit where available, else alphabetical: stable and meaningful
+    first = next(iter(spec["networks"].values())).get("deployments", {})
+    order = []
+    for d, fields in first.items():
+        short = d.split("::")[-1].replace("DEPLOYMENT_", "")
+        bit = fields.get("bit", {}).get("value")
+        order.append((bit if isinstance(bit, int) else 999, short))
+    order.sort()
+    return [s for _, s in order]
+
+
 def cname(node_name):
     """digishieldConsensus -> DIGISHIELD"""
     n = node_name.replace("Consensus", "")
@@ -114,6 +145,30 @@ def gen_header(spec):
         out.append(f"    {'bool':<10} {f};")
     out.append("} dogecoin_consensus_params;")
     out.append("")
+
+    # ---- deployments ----
+    deps = deployment_names(spec)
+    if deps:
+        out.append("/* BIP9 versionbits deployments. */")
+        out.append("typedef enum {")
+        for d in deps:
+            out.append(f"    DOGECOIN_DEPLOYMENT_{d},")
+        out.append("    DOGECOIN_DEPLOYMENT__COUNT")
+        out.append("} dogecoin_deployment_t;")
+        out.append("")
+        out.append("/* Core's 'never times out' sentinel for nTimeout. */")
+        out.append("#define DOGECOIN_DEPLOYMENT_NO_TIMEOUT 0")
+        out.append("")
+        out.append("typedef struct {")
+        out.append("    const char *name;")
+        out.append("    int         bit;        /* versionbits bit */")
+        out.append("    /* int64_t, not uint32_t: regtest uses 999999999999, which")
+        out.append("     * truncates to a 2083 timestamp in 32 bits — turning")
+        out.append("     * 'never times out' into 'times out'. */")
+        out.append("    int64_t     nStartTime;")
+        out.append("    int64_t     nTimeout;   /* 0 == DOGECOIN_DEPLOYMENT_NO_TIMEOUT */")
+        out.append("} dogecoin_deployment;")
+        out.append("")
     out.append("/* Returns the consensus epoch in force AT `height`, inclusive.")
     out.append(" *")
     out.append(" * `height` is the block's OWN height. In Core's miner this is")
@@ -133,6 +188,15 @@ def gen_header(spec):
     out.append("const dogecoin_consensus_params *dogecoin_consensus_epochs(")
     out.append("    dogecoin_chain_t chain, size_t *count);")
     out.append("")
+    if deps:
+        out.append("/* Deployment parameters for `chain`. NULL if either arg is out of range. */")
+        out.append("const dogecoin_deployment *dogecoin_deployment_get(")
+        out.append("    dogecoin_chain_t chain, dogecoin_deployment_t dep);")
+        out.append("")
+        out.append("/* All deployments for `chain`, indexed by dogecoin_deployment_t. */")
+        out.append("const dogecoin_deployment *dogecoin_deployments(")
+        out.append("    dogecoin_chain_t chain, size_t *count);")
+        out.append("")
     out.append("#ifdef __cplusplus")
     out.append("}")
     out.append("#endif")
@@ -182,6 +246,64 @@ def gen_impl(spec):
         out.append(f"    [DOGECOIN_CHAIN_{up}] = {{ {tbl}, sizeof({tbl}) / sizeof({tbl}[0]) }},")
     out.append("};")
     out.append("")
+
+    # ---- deployment tables ----
+    deps = deployment_names(spec)
+    if deps:
+        for cls, (up, _) in CHAINS.items():
+            net = spec["networks"].get(cls)
+            if not net:
+                continue
+            by_short = {d.split("::")[-1].replace("DEPLOYMENT_", ""): f
+                        for d, f in net.get("deployments", {}).items()}
+            out.append(f"/* ---- {cls}: deployments ---- */")
+            out.append(f"static const dogecoin_deployment k_{up.lower()}_deployments"
+                       f"[DOGECOIN_DEPLOYMENT__COUNT] = {{")
+            for d in deps:
+                f = by_short.get(d, {})
+                bit = f.get("bit", {}).get("value")
+                start = f.get("nStartTime", {}).get("value")
+                timeout = f.get("nTimeout", {}).get("value")
+                out.append(f"    [DOGECOIN_DEPLOYMENT_{d}] = {{")
+                out.append(f'        .name = "{d}",')
+                if isinstance(bit, int):
+                    out.append(f"        .bit = {bit},")
+                if isinstance(start, int):
+                    out.append(f"        .nStartTime = INT64_C({start}),")
+                if isinstance(timeout, int):
+                    note = "  /* never times out */" if timeout == 0 else ""
+                    out.append(f"        .nTimeout = INT64_C({timeout}),{note}")
+                out.append("    },")
+            out.append("};")
+            out.append("")
+
+        out.append("static const dogecoin_deployment *const k_deployments"
+                   "[DOGECOIN_CHAIN__COUNT] = {")
+        for cls, (up, _) in CHAINS.items():
+            if cls in spec["networks"]:
+                out.append(f"    [DOGECOIN_CHAIN_{up}] = k_{up.lower()}_deployments,")
+        out.append("};")
+        out.append("")
+
+        out.append("const dogecoin_deployment *dogecoin_deployments(")
+        out.append("    dogecoin_chain_t chain, size_t *count)")
+        out.append("{")
+        out.append("    if ((unsigned)chain >= DOGECOIN_CHAIN__COUNT) {")
+        out.append("        if (count) *count = 0;")
+        out.append("        return NULL;")
+        out.append("    }")
+        out.append("    if (count) *count = DOGECOIN_DEPLOYMENT__COUNT;")
+        out.append("    return k_deployments[chain];")
+        out.append("}")
+        out.append("")
+        out.append("const dogecoin_deployment *dogecoin_deployment_get(")
+        out.append("    dogecoin_chain_t chain, dogecoin_deployment_t dep)")
+        out.append("{")
+        out.append("    if ((unsigned)chain >= DOGECOIN_CHAIN__COUNT) return NULL;")
+        out.append("    if ((unsigned)dep >= DOGECOIN_DEPLOYMENT__COUNT) return NULL;")
+        out.append("    return &k_deployments[chain][dep];")
+        out.append("}")
+        out.append("")
 
     out.append("const dogecoin_consensus_params *dogecoin_consensus_epochs(")
     out.append("    dogecoin_chain_t chain, size_t *count)")
@@ -249,6 +371,32 @@ def gen_tests(spec):
     out.append("    if (!ok) failures++;")
     out.append("}")
     out.append("")
+    if deployment_names(spec):
+        out.append("static void check_dep(dogecoin_chain_t chain, const char *chain_name,")
+        out.append("                      dogecoin_deployment_t dep, const char *want_name,")
+        out.append("                      int want_bit, int64_t want_start, int64_t want_timeout)")
+        out.append("{")
+        out.append("    const dogecoin_deployment *d = dogecoin_deployment_get(chain, dep);")
+        out.append("    if (!d) {")
+        out.append('        printf("  FAIL %-8s %-12s -> NULL\\n", chain_name, want_name);')
+        out.append("        failures++;")
+        out.append("        return;")
+        out.append("    }")
+        out.append("    int ok = strcmp(d->name, want_name) == 0 &&")
+        out.append("             d->bit == want_bit &&")
+        out.append("             d->nStartTime == want_start &&")
+        out.append("             d->nTimeout == want_timeout;")
+        out.append('    printf("  %s %-8s %-12s bit=%-2d start=%-12lld timeout=%lld%s\\n",')
+        out.append('           ok ? "ok  " : "FAIL", chain_name, d->name, d->bit,')
+        out.append("           (long long)d->nStartTime, (long long)d->nTimeout,")
+        out.append('           d->nTimeout == DOGECOIN_DEPLOYMENT_NO_TIMEOUT ? "  (never)" : "");')
+        out.append("    if (!ok) {")
+        out.append('        printf("       want: bit=%d start=%lld timeout=%lld\\n",')
+        out.append("               want_bit, (long long)want_start, (long long)want_timeout);")
+        out.append("        failures++;")
+        out.append("    }")
+        out.append("}")
+        out.append("")
     out.append("int main(void)")
     out.append("{")
     out.append('    printf("consensus boundary tests (generated from Core)\\n");')
@@ -285,6 +433,27 @@ def gen_tests(spec):
             node, why = cases[h]
             out.append(f'    check(DOGECOIN_CHAIN_{up}, "{up.lower()}", '
                        f'{h}u, "{node}");   /* {why} */')
+
+    deps = deployment_names(spec)
+    if deps:
+        out.append("")
+        out.append('    printf("\\ndeployments\\n");')
+        for cls, (up, _) in CHAINS.items():
+            net = spec["networks"].get(cls)
+            if not net:
+                continue
+            by_short = {d.split("::")[-1].replace("DEPLOYMENT_", ""): f
+                        for d, f in net.get("deployments", {}).items()}
+            for d in deps:
+                f = by_short.get(d, {})
+                bit = f.get("bit", {}).get("value")
+                start = f.get("nStartTime", {}).get("value")
+                timeout = f.get("nTimeout", {}).get("value")
+                if not all(isinstance(x, int) for x in (bit, start, timeout)):
+                    continue
+                out.append(f'    check_dep(DOGECOIN_CHAIN_{up}, "{up.lower()}", '
+                           f'DOGECOIN_DEPLOYMENT_{d}, "{d}",')
+                out.append(f"              {bit}, INT64_C({start}), INT64_C({timeout}));")
 
     out.append("")
     out.append('    printf("\\n%s: %d failure(s)\\n", failures ? "FAILED" : "OK", failures);')
