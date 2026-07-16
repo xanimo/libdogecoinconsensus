@@ -17,8 +17,21 @@ aren't bugs:
   _provenance.core_branch / core_detached
                        CI checks out a detached commit; a developer is on a branch
 
-What is NOT ignored: core_commit and file_sha256. Those are the pin. If they
-differ, the specs genuinely describe different source and the check must fail.
+What is NOT ignored: file_sha256, and the extracted content itself. Those are
+the pin. If they differ, the specs genuinely describe different source and the
+check must fail.
+
+core_commit is recorded but NOT compared. It identifies the repository state;
+file_sha256 identifies the bytes actually parsed. Those come apart constantly:
+a docs, depends, test, or whitespace commit moves the commit hash without
+touching chainparams.cpp. Failing on that is crying wolf -- and the remedy it
+demands (re-pin to a commit whose consensus definition is byte-identical)
+teaches the reader that re-pinning is an empty ritual. That is precisely how a
+real drift gets waved through.
+
+The sha256 is the truth: it describes the exact bytes parsed, even if the
+working tree was dirty. A commit that differs while every extracted file hashes
+identically is reported as a note, not a failure.
 
 A CI check that cries wolf gets disabled, and a disabled check protects nothing.
 So this ignores exactly what it must and nothing more.
@@ -37,6 +50,13 @@ from pathlib import Path
 IGNORE_TOP = {"_source"}
 IGNORE_PROV = {
     "source",           # path
+    # NOT the identity of what was parsed -- see the module docstring.
+    # file_sha256 is. A commit hash moves on any change to the repo; the
+    # sha256 moves only when the extracted bytes move, which is the only
+    # thing that can change what this library says the rules are.
+    "core_commit",
+    "core_client_version",   # tracks the tree, not the parsed file
+    "core_is_release",
     "file_dirty",       # local working tree
     "tree_dirty",
     "core_branch",      # CI detaches HEAD; devs are on a branch
@@ -107,9 +127,23 @@ def main():
     la = args.label_first or str(args.first)
     lb = args.label_second or str(args.second)
 
+    # Raw provenance: normalize() strips core_commit, so read it pre-strip.
+    ra = json.loads(args.first.read_text()).get("_provenance", {})
+    rb = json.loads(args.second.read_text()).get("_provenance", {})
+
     diffs = list(walk_diff(a, b))
     if not diffs:
         print(f"OK: {la} is semantically identical to {lb}")
+        # Same bytes, different commit: not a failure, but not nothing either.
+        # Say it out loud so the pin can be refreshed deliberately rather than
+        # discovered by surprise later.
+        if ra.get("core_commit") != rb.get("core_commit"):
+            print(f"note: extracted from the same bytes "
+                  f"(sha256 {str(ra.get('file_sha256'))[:16]}...) but different")
+            print(f"      Core commits -- {str(ra.get('core_commit'))[:12]} vs "
+                  f"{str(rb.get('core_commit'))[:12]}.")
+            print("      The consensus definition did not move; the repository did.")
+            print("      Refresh the pin with `make spec` when convenient.")
         return 0
 
     print(f"DIFFERS: {la} vs {lb}")
@@ -120,16 +154,25 @@ def main():
         print(f"  ... and {len(diffs) - 50} more")
     print()
 
-    # The most common real cause is worth naming explicitly.
-    ca = a.get("_provenance", {}).get("core_commit")
-    cb = b.get("_provenance", {}).get("core_commit")
-    if ca != cb:
-        print(f"  core_commit differs: {ca} vs {cb}")
-        print("  => these specs describe DIFFERENT Core source. Not a bug in the")
+    # The most common real cause is worth naming explicitly. Key on the
+    # sha256, not the commit: the sha256 is what identifies the parsed bytes.
+    sa = ra.get("file_sha256")
+    sb = rb.get("file_sha256")
+    ca = ra.get("core_commit")
+    cb = rb.get("core_commit")
+    if sa != sb:
+        print(f"  file_sha256 differs: {str(sa)[:16]}... vs {str(sb)[:16]}...")
+        print("  => these specs were parsed from DIFFERENT bytes. Not a bug in the")
         print("     extractor; regenerate against the intended commit.")
+        if ca != cb:
+            print(f"     (core_commit: {str(ca)[:12]} vs {str(cb)[:12]})")
     else:
-        print("  Same core_commit, different content. Either the committed spec was")
-        print("  hand-edited, or the extractor changed. Both need review.")
+        print("  Same file_sha256, different content: the SAME bytes parsed two")
+        print("  different ways. The committed spec was hand-edited, or the")
+        print("  extractor changed. Both need review.")
+        if ca != cb:
+            print(f"  (core_commit differs -- {str(ca)[:12]} vs {str(cb)[:12]} -- but")
+            print("   that is not the cause: the parsed bytes are identical.)")
     return 1
 
 

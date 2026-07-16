@@ -292,12 +292,16 @@ nearest tag: v1.14.7-239-g699f62ccba
 chainparams.cpp sha256: 150d3733903d05f2...
 ```
 
-The **commit hash is the identity**. `git describe` resolves to the nearest
+The **sha256 is the identity**. `git describe` resolves to the nearest
 reachable *tag*, which on a long-running untagged master can be far behind the
 software's self-reported version — and it abbreviates the hash to however many
 characters are unambiguous in that particular clone, so the same commit renders
 differently in a full clone than a partial one. The sha256 is the truth: it
-describes the exact bytes parsed, even if the working tree was dirty.
+describes the exact bytes parsed, even if the working tree was dirty. So the
+sha256, not the commit, is what CI compares: a docs or whitespace commit moves
+the commit hash without touching a single extracted byte, and failing on that
+teaches you to re-pin as a ritual — which is how a real change gets waved
+through. A differing commit over identical bytes is reported as a note.
 
 A spec without provenance is a rumor.
 
