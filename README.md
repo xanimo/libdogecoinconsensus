@@ -253,6 +253,28 @@ anyway: a permanently nonzero `_unparsed` trains you to ignore it, and
 `_unparsed` is the mechanism that caught the fork tree. The invariant only works
 if zero is the normal state.
 
+**Field coverage is enforced, not assumed.** The generator's emit lists are
+hand-maintained, so rule 1 needs enforcing at the generator too, not just the
+extractor. Every consensus field in the spec must be accounted for exactly
+once: emitted, or in `EXCLUDED_FIELDS` with a stated reason. A field Core adds
+tomorrow matches nothing and is a hard error rather than a silent omission —
+otherwise it vanishes into a plausible library, which is the original
+flattening bug arriving through a different door. The reverse is checked too: a
+name in an emit list that the spec never had is a typo, and a typo emits as a
+defaulted zero — a wrong constant.
+
+**uint256 fields are big-endian.** `powLimit`, `nMinimumChainWork`, `BIP34Hash`
+and `defaultAssumeValid` are emitted as `uint8_t[32]` in the order Core's
+`uint256S()` literal is *written*, which is not `uint256`'s internal
+little-endian layout. A consumer comparing against a serialized hash must
+reverse.
+
+**`hashGenesisBlock` is excluded.** Core computes it at runtime
+(`genesis.GetHash()`), so `chainparams.cpp` has no literal to extract — the
+value appears only in the adjacent `assert()`. Reaching it would mean either
+extracting assertions (assertions aren't assignments) or hashing genesis
+ourselves (that's logic, not a definition).
+
 **Reject codes aren't an enum.** They're free-standing
 `static const unsigned char` declarations, which is why they need a different
 extractor than opcodes.
@@ -288,7 +310,13 @@ Two jobs, deliberately split:
   reproduces exactly. If it doesn't, the pin is a lie. Then runs all five test
   tiers.
 - **`drift`** — weekly, against Core's `master` tip. Fails if the consensus
-  definition moved. **Expected to fail sometimes; that's the point.**
+  definition moved. **Expected to fail sometimes; that's the point.** It also
+  runs the field-coverage gate (`--check-fields-only`) against the tip: `verify`
+  generates from the *pinned* Core, where by construction no field is unknown,
+  so this is the only job that can ever see a field the generator hasn't been
+  taught about. That question is distinct from the regression gate, which
+  flattens fields generically and reports a new one as just another changed
+  value — "Core moved", not "the library would drop this".
 
 If drift detection ran on every PR, a Core change would redden unrelated pull
 requests and people would learn to ignore red. A scheduled job that fails loudly
