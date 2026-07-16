@@ -76,7 +76,16 @@ spec: spec.json
 verify: spec.json
 	./verify_selection.py spec.json
 
-$(GENERATED): spec.json
+# The generator is a prerequisite, not just the spec: a change to the emit
+# lists or the codegen changes the output while spec.json's timestamp sits
+# still. Without this, `make gen` reports "nothing to be done" and the tree
+# keeps a stale library built by the previous generator -- silently, which is
+# the one failure mode this project does not accept. The opcode and reject
+# rules below already list theirs; this one was the outlier.
+#
+# verify_selection.py is listed for the same reason: it gates this rule, so a
+# change to the proof must re-run it against the spec.
+$(GENERATED): spec.json gen_consensus_c.py verify_selection.py
 	./verify_selection.py spec.json
 	./gen_consensus_c.py spec.json -o $(SRC)/
 
