@@ -35,7 +35,37 @@ by deriving one side from the other.
 
 ---
 
+## The boundary
+
+**This does not replace or compete with `libdogecoin`.** Read this section
+before the next one: everything below only makes sense once it is clear which
+question each library answers.
+
+| | `libdogecoin` | `libdogecoinconsensus` |
+|---|---|---|
+| **job** | talk to the network | **agree with** the network |
+| **scope** | wallet, keys, tx construction | consensus rules by height |
+| **params** | flat — correctly so | height-indexed schedule |
+| **targets** | MCU, low-mem, no C++ toolchain | hosts doing validation |
+
+`libdogecoin` has no consensus height dimension, and **that is correct**. It
+doesn't validate — it constructs transactions and manages keys, where
+`nPowTargetTimespan` never comes up. The gap is invisible because of what
+`libdogecoin` is. The two libraries answer different questions.
+
+Consumers of this library: anything that must reproduce Core's rules at a given
+height — header validation, compact block filters, alternative implementations.
+
+So the finding below is a fact about **Core**, not a criticism of any library
+that doesn't encode it. A library with no reason to ask "what were the rules at
+height H" has no reason to carry the answer.
+
+---
+
 ## The central finding
+
+A fact about Core's `chainparams.cpp`, and the reason this repo derives rather
+than transcribes:
 
 **Core's consensus is not a struct. It's a height-indexed binary tree.**
 
@@ -76,8 +106,19 @@ difficulty semantics.
 **The first version of this extractor flattened all of it.** It reported
 `MAINNET.nPowTargetTimespan = 14400` — the pre-Digishield value — and silently
 discarded the post-145000 regimes. A client generated from that spec would
-hard-fork itself off the network at block 145,000. That artifact is kept in
-[`docs/`](docs/) as evidence.
+hard-fork itself off the network at block 145,000.
+
+That artifact is worth keeping and reading, not just describing: it looks
+correct, it parses, and every value in it is a real value that appears in
+`chainparams.cpp`. It is also a client that forks itself off mainnet. That is
+what "confidently wrong" means here, and it is the failure this whole repo
+exists to make impossible.
+
+> **Note:** [`docs/`](docs/) describes that spec but does not currently contain
+> it — `flattened_v1_spec.json` was never committed. Until it is, this section
+> is a claim rather than evidence, which is exactly the standard the rest of
+> this repo refuses to accept. Regenerate it with the pre-tree extractor and
+> commit it, or drop the claim.
 
 What caught it: the rule that **nothing is ever silently dropped**. The tree
 wiring landed in `_unparsed` instead of vanishing. That invariant is the only
@@ -132,25 +173,6 @@ reference — 1.4M heights, zero mismatches.
 **Carry into any API:** the height is the *block's own* height (in Core's miner,
 `pindexPrev->nHeight + 1`). The epoch switches **on** the block at
 `nHeightEffective`, not after it.
-
----
-
-## The boundary
-
-| | `libdogecoin` | `libdogecoinconsensus` |
-|---|---|---|
-| **job** | talk to the network | **agree with** the network |
-| **scope** | wallet, keys, tx construction | consensus rules by height |
-| **params** | flat — correctly so | height-indexed schedule |
-| **targets** | MCU, low-mem, no C++ toolchain | hosts doing validation |
-
-`libdogecoin` has no consensus height dimension, and **that is correct**. It
-doesn't validate — it constructs transactions and manages keys, where
-`nPowTargetTimespan` never comes up. The gap is invisible because of what
-`libdogecoin` is. The two libraries answer different questions.
-
-Consumers of this library: anything that must reproduce Core's rules at a given
-height — header validation, compact block filters, alternative implementations.
 
 ---
 
@@ -213,6 +235,9 @@ const dogecoin_deployment *d =
     dogecoin_deployment_get(DOGECOIN_CHAIN_MAINNET, DOGECOIN_DEPLOYMENT_SEGWIT);
 /* d->nTimeout == DOGECOIN_DEPLOYMENT_NO_TIMEOUT */
 
+/* uint256 fields: uint8_t[32], BIG-ENDIAN. See the note below. */
+/* p->powLimit[0] == 0x00, p->powLimit[2] == 0x0f   (mainnet: 0x00000fff...) */
+
 /* Script opcodes */
 const char *name = dogecoin_opcode_name(0xb1);   /* "OP_CHECKLOCKTIMEVERIFY" */
 uint8_t op;
@@ -222,6 +247,45 @@ dogecoin_opcode_from_name("OP_NOP2", &op);       /* 0xb1 — aliases resolve */
 Epoch fields are **fully resolved** at generation time — values inherited
 through Core's derivation chain are folded in, so an epoch is self-contained and
 needs no parent lookup at runtime.
+
+### uint256 byte order — read this before comparing hashes
+
+`powLimit`, `nMinimumChainWork`, `BIP34Hash` and `defaultAssumeValid` are
+`uint8_t[32]` in **big-endian**: the order the value is *written* in Core's
+`uint256S("0x00000fff...")` literal, and the order it is displayed in.
+
+**This is not the byte order Core's `uint256` holds internally, and it is not
+the order a hash arrives in off the wire.** Core's `uint256` stores
+little-endian: `base_blob::SetHex()` walks the hex string backwards, so the
+*last* hex byte of the literal lands in `data[0]`, and `GetHex()` reverses it
+back for display. Serialization is a raw write of that internal buffer
+(`s.write((char*)data, sizeof(data))`), so a hash off the wire or off disk is
+little-endian too.
+
+So a consumer holding a serialized hash **must reverse one side** before
+comparing:
+
+```c
+/* WRONG — a little-endian wire hash against a big-endian table value. */
+uint8_t wire_hash[32];   /* as deserialized from a block header */
+if (memcmp(wire_hash, p->powLimit, 32) <= 0) { ... }
+
+/* RIGHT — reverse the wire hash into display order first. */
+uint8_t be[32];
+for (size_t i = 0; i < 32; i++) be[i] = wire_hash[31 - i];
+if (memcmp(be, p->powLimit, 32) <= 0) { ... }
+```
+
+Note that `memcmp` works for a magnitude comparison only because both sides are
+big-endian and fixed-width — most-significant byte first is exactly what
+`memcmp` orders on. Core itself doesn't do this: `CheckProofOfWork` converts to
+`arith_uint256` and compares numerically. This library ships the definition, not
+the arithmetic.
+
+Big-endian is deliberate: it matches the literal in `chainparams.cpp`, so a
+reviewer can diff the generated table against Core by eye. The cost is that the
+conversion is the consumer's job — and getting it wrong is a fork, not a bug
+report, which is why it is stated here and not only in a header comment.
 
 ---
 
@@ -389,6 +453,7 @@ reproducibility instead.
 | `diff_checkpoints.py` | libdogecoin checkpoints vs Core |
 | `regression_gate.py` | pin/check the consensus definition vs Core drift |
 | `compare_specs.py` | semantic spec comparison (ignores paths, not the pin) |
+| `docs/` | notes on the flattened first spec, kept as evidence — see [The central finding](#the-central-finding) |
 
 ## License
 
