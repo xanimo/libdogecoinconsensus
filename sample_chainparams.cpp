@@ -1,5 +1,28 @@
 // Abridged sample mirroring Dogecoin Core src/chainparams.cpp structure.
 // Used to develop/validate the extractor offline.
+//
+// THIS FILE IS FLAT AND THEREFORE WRONG. It carries no consensus fork tree:
+// no pConsensusRoot, no pLeft/pRight, no digishieldConsensus. Real Core
+// mainnet has three regimes (consensus@0 -> digishield@145000 ->
+// auxpow@371337); this has one. It is NOT a reference for Dogecoin's
+// consensus rules and must never be treated as one -- Core is the only source
+// of truth (README rule 5).
+//
+// It has two jobs, and the second depends on the first being wrong:
+//
+//   1. An offline fixture for developing the extractor without a Core
+//      checkout.
+//   2. The input that generates docs/flattened_v1_spec.json -- the committed
+//      evidence artifact. Extracting from a flat input reproduces exactly the
+//      v1 flattening bug the README's central finding is about, which makes
+//      the failure something you can run rather than something you're asked
+//      to believe:
+//
+//        ./extract_chainparams.py sample_chainparams.cpp \
+//            -o docs/flattened_v1_spec.json
+//
+// So: do not "fix" this file by adding the tree. Its flatness is the point.
+// If you want a faithful copy of Core, use Core.
 
 class CMainParams : public CChainParams {
 public:

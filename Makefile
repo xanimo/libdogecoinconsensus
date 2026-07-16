@@ -29,7 +29,7 @@ GENERATED_REJECT := $(SRC)/dogecoin_reject.h \
                     $(SRC)/dogecoin_reject.c \
                     $(SRC)/test_reject.c
 
-.PHONY: all spec opcodes reject gen verify check diff pin gate ci clean help check-libdogecoin
+.PHONY: all spec opcodes reject gen verify check diff pin gate ci clean help check-libdogecoin evidence
 
 all: check
 
@@ -162,6 +162,28 @@ diff: check-libdogecoin
 # What CI runs. Reproduces the committed spec from its pinned Core commit,
 # proves the reduction, builds, tests, checks the gate.
 # If this passes locally it will pass in CI.
+# The flattened evidence spec must stay reproducible from the sample, or the
+# README's central finding degrades from "run this" back to "trust me".
+# Needs no Core checkout: the whole point is that the input is a local flat
+# mirror.
+evidence:
+	@./extract_chainparams.py sample_chainparams.cpp -o /tmp/_evidence.json 2>/dev/null
+	@python3 -c "import json,sys; \
+d=json.load(open('/tmp/_evidence.json')); \
+m=d['networks']['CMainParams']; \
+n=len(m['activation_schedule']); \
+t=m['activation_schedule'][0]['effective_fields']['nPowTargetTimespan']; \
+c=d['_provenance'].get('core_commit'); \
+ok = (n==1 and t==14400 and c is None); \
+print('  evidence: %d epoch, nPowTargetTimespan=%s, core_commit=%s' % (n,t,c)); \
+sys.exit(0 if ok else 1)" || { \
+	  echo "error: sample_chainparams.cpp no longer reproduces the flattened spec."; \
+	  echo "       docs/flattened_v1_spec.json is evidence for the README's central"; \
+	  echo "       finding; if the sample changed, the evidence is stale."; \
+	  rm -f /tmp/_evidence.json; exit 1; }
+	@rm -f /tmp/_evidence.json
+	@echo "OK: the flattened evidence spec still reproduces from sample_chainparams.cpp"
+
 ci: spec.json opcodes.json reject.json
 	./extract_chainparams.py $(CHAINPARAMS) -o spec.regen.json
 	./extract_opcodes.py $(SCRIPT_H) -o opcodes.regen.json
@@ -173,6 +195,7 @@ ci: spec.json opcodes.json reject.json
 	./compare_specs.py reject.json reject.regen.json \
 	    --label-first "committed reject.json" --label-second "fresh extraction"
 	@rm -f spec.regen.json opcodes.regen.json reject.regen.json
+	$(MAKE) evidence
 	$(MAKE) check CORE=$(CORE)
 	@if [ -f pinned.json ]; then \
 	  ./regression_gate.py spec.json --check --against pinned.json; \

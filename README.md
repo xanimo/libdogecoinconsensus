@@ -114,11 +114,17 @@ correct, it parses, and every value in it is a real value that appears in
 what "confidently wrong" means here, and it is the failure this whole repo
 exists to make impossible.
 
-> **Note:** [`docs/`](docs/) describes that spec but does not currently contain
-> it — `flattened_v1_spec.json` was never committed. Until it is, this section
-> is a claim rather than evidence, which is exactly the standard the rest of
-> this repo refuses to accept. Regenerate it with the pre-tree extractor and
-> commit it, or drop the claim.
+**It is committed, not described:
+[`docs/flattened_v1_spec.json`](docs/flattened_v1_spec.json).** Open it. One
+consensus node per network, `nPowTargetTimespan = 14400`, no post-145000
+regimes, `0 unparsed`, and the extractor exited 0.
+
+The original v1 artifact was never committed and is not recoverable, so that
+file is a reproduction rather than a relic: the current extractor run against
+[`sample_chainparams.cpp`](sample_chainparams.cpp), a flat pre-tree mirror of
+Core kept in this repo. Same wrong shape, same wrong values, same fork —
+and unlike the lost original, it regenerates on demand. See
+[`docs/`](docs/) for what it does and doesn't prove.
 
 What caught it: the rule that **nothing is ever silently dropped**. The tree
 wiring landed in `_unparsed` instead of vanishing. That invariant is the only
@@ -453,7 +459,8 @@ reproducibility instead.
 | `diff_checkpoints.py` | libdogecoin checkpoints vs Core |
 | `regression_gate.py` | pin/check the consensus definition vs Core drift |
 | `compare_specs.py` | semantic spec comparison (ignores paths, not the pin) |
-| `docs/` | notes on the flattened first spec, kept as evidence — see [The central finding](#the-central-finding) |
+| `sample_chainparams.cpp` | flat pre-tree mirror of Core; extractor test input **and** the source of the flattened evidence spec |
+| `docs/flattened_v1_spec.json` | a spec that is wrong on purpose, kept as evidence — see [`docs/`](docs/) |
 
 ## License
 
