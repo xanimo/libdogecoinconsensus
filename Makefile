@@ -29,7 +29,7 @@ GENERATED_REJECT := $(SRC)/dogecoin_reject.h \
                     $(SRC)/dogecoin_reject.c \
                     $(SRC)/test_reject.c
 
-.PHONY: all spec opcodes reject gen verify check diff pin gate ci clean help check-libdogecoin evidence
+.PHONY: all spec opcodes reject gen verify check diff pin gate ci clean help check-libdogecoin evidence deterministic
 
 all: check
 
@@ -184,6 +184,31 @@ sys.exit(0 if ok else 1)" || { \
 	@rm -f /tmp/_evidence.json
 	@echo "OK: the flattened evidence spec still reproduces from sample_chainparams.cpp"
 
+# Generation must be a function of the spec and nothing else. src/ is not
+# committed, so CI never diffs a stored copy against a fresh one -- which means
+# nondeterminism would never surface: every run regenerates, every run agrees
+# with itself, and the library silently differs build to build.
+#
+# The hazard is ordinary: one set() or dict iteration in an emit path reorders
+# struct fields across runs. Same spec, incompatible ABI, all tests green --
+# they compile whatever was just emitted. PYTHONHASHSEED is what makes that
+# reproducible instead of a once-a-month mystery.
+deterministic: spec.json
+	@rm -rf .det_a .det_b
+	@PYTHONHASHSEED=1   ./gen_consensus_c.py spec.json -o .det_a >/dev/null 2>&1
+	@PYTHONHASHSEED=999 ./gen_consensus_c.py spec.json -o .det_b >/dev/null 2>&1
+	@if diff -r .det_a .det_b >/dev/null 2>&1; then \
+	  rm -rf .det_a .det_b; \
+	  echo "OK: generation is deterministic (stable across PYTHONHASHSEED)"; \
+	else \
+	  echo "error: generation is NOT deterministic — the same spec produced two"; \
+	  echo "       different libraries. Look for set()/dict iteration in an emit"; \
+	  echo "       path; if it reorders struct fields, that is an ABI break that"; \
+	  echo "       every test would still pass."; \
+	  diff -r .det_a .det_b | head -20; \
+	  rm -rf .det_a .det_b; exit 1; \
+	fi
+
 ci: spec.json opcodes.json reject.json
 	./extract_chainparams.py $(CHAINPARAMS) -o spec.regen.json
 	./extract_opcodes.py $(SCRIPT_H) -o opcodes.regen.json
@@ -196,6 +221,7 @@ ci: spec.json opcodes.json reject.json
 	    --label-first "committed reject.json" --label-second "fresh extraction"
 	@rm -f spec.regen.json opcodes.regen.json reject.regen.json
 	$(MAKE) evidence
+	$(MAKE) deterministic
 	$(MAKE) check CORE=$(CORE)
 	@if [ -f pinned.json ]; then \
 	  ./regression_gate.py spec.json --check --against pinned.json; \
@@ -204,6 +230,7 @@ ci: spec.json opcodes.json reject.json
 	fi
 
 clean:
+	rm -rf .det_a .det_b
 	rm -f t_bound t_exh t_ops t_rej $(GENERATED) $(GENERATED_OPS) $(GENERATED_REJECT)
 	rm -f spec.regen.json opcodes.regen.json reject.regen.json
 	rm -rf __pycache__
