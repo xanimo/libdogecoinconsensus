@@ -52,6 +52,105 @@ BOOL_FIELDS = [
     "fStrictChainId",
 ]
 
+# uint256 fields. Empty for now: see EXCLUDED_FIELDS.
+HASH_FIELDS = []
+
+# Fields present in the spec that are deliberately NOT emitted, each with the
+# reason. This is a declaration, not a dumping ground: an entry here is a claim
+# that omitting the field is correct, reviewable in diff. Anything in the spec
+# and absent from every list above is a hard error (see check_field_coverage).
+EXCLUDED_FIELDS = {
+    # Core computes this at runtime -- `consensus.hashGenesisBlock =
+    # genesis.GetHash()` -- so chainparams.cpp holds no literal to extract.
+    # The value only appears in the adjacent assert(). Emitting it would mean
+    # either lifting that assert (a different extractor: assertions are not
+    # assignments) or hashing the genesis block ourselves (that is validation
+    # logic, not a definition -- we extract definitions, not logic).
+    # Excluded until an extractor exists that can source it honestly.
+    "hashGenesisBlock":
+        "computed by Core at runtime (genesis.GetHash()); no literal in "
+        "chainparams.cpp -- value lives only in the adjacent assert()",
+
+    # These four are uint256 and consensus-critical -- powLimit in particular
+    # is the difficulty clamp, and it varies by epoch. They are excluded here
+    # only because this commit adds the gate, and the gate's whole point is
+    # that a field is never dropped without a stated reason. Recording the
+    # debt honestly is the prerequisite for paying it; the next commit emits
+    # them and deletes these four entries.
+    "powLimit": "uint256; not yet representable in the epoch struct",
+    "nMinimumChainWork": "uint256; not yet representable in the epoch struct",
+    "BIP34Hash": "uint256; not yet representable in the epoch struct",
+    "defaultAssumeValid": "uint256; not yet representable in the epoch struct",
+}
+
+
+def check_field_coverage(spec):
+    """Refuse to generate if the spec carries a consensus field we don't emit.
+
+    Rule 1 -- never silently drop an assignment -- is what caught the fork
+    tree. The extractor enforces it via `_unparsed`. This enforces it one
+    layer down, where it was previously unenforced: the emit lists above are
+    hand-maintained, so a field Core adds tomorrow lands in the spec, matches
+    nothing here, and vanishes from the library with no diagnostic. That is
+    the same failure class as the original flattening -- a plausible,
+    confidently wrong artifact -- arriving through a different door.
+
+    A spec field must be accounted for exactly once: emitted (INT/BOOL/HASH)
+    or excluded with a stated reason. Anything else is a hard error.
+
+    Rule 7: loud over clever. A crash beats a wrong table.
+    """
+    emitted = {f for f, _ in INT_FIELDS} | set(BOOL_FIELDS) | set(HASH_FIELDS)
+    known = emitted | set(EXCLUDED_FIELDS)
+
+    # Where each unknown field came from, so the error names a real location.
+    seen = {}
+    for cls, net in spec["networks"].items():
+        for node_name, node in net.get("consensus_nodes", {}).items():
+            for f in node.get("fields", {}):
+                seen.setdefault(f, []).append(f"{cls}::{node_name}")
+
+    unknown = sorted(set(seen) - known)
+    if unknown:
+        lines = [
+            "error: spec contains consensus field(s) this generator does not "
+            "account for.",
+            "",
+            "Emitting anyway would drop them silently from the library -- the "
+            "exact failure",
+            "class this project exists to eliminate (README rule 1).",
+            "",
+        ]
+        for f in unknown:
+            where = ", ".join(sorted(set(seen[f]))[:3])
+            more = "" if len(set(seen[f])) <= 3 else f" (+{len(set(seen[f])) - 3} more)"
+            lines.append(f"  {f}")
+            lines.append(f"      seen in: {where}{more}")
+        lines += [
+            "",
+            "Fix by choosing one, in gen_consensus_c.py:",
+            "  * emit it   -- add to INT_FIELDS, BOOL_FIELDS, or HASH_FIELDS",
+            "  * exclude it -- add to EXCLUDED_FIELDS with the reason why "
+            "omitting it is correct",
+            "",
+            "Do not hand-edit generated output (rule 4). Fix the generator.",
+        ]
+        raise SystemExit("\n".join(lines))
+
+    # The reverse direction: an emit list naming a field the spec never had is
+    # also a defect -- it means a hand-typed name is wrong (a typo emits a
+    # field that is always absent, and a defaulted zero is a wrong constant),
+    # or Core removed a field and the list still claims it.
+    stale = sorted(known - set(seen))
+    if stale:
+        raise SystemExit(
+            "error: generator lists field(s) absent from the entire spec:\n"
+            + "".join(f"  {f}\n" for f in stale)
+            + "\nEither the name is misspelled (it would emit as a default -- "
+              "a wrong constant),\nor Core dropped the field and the list is "
+              "stale. Core is truth (rule 5).")
+
+
 CHAINS = {
     "CMainParams": ("MAINNET", "main"),
     "CTestNetParams": ("TESTNET", "test"),
@@ -536,6 +635,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("spec", type=Path)
     ap.add_argument("-o", "--outdir", type=Path, default=Path("."))
+    ap.add_argument(
+        "--check-fields-only", action="store_true",
+        help="run the field-coverage check and exit; emit nothing. For drift "
+             "detection against a Core the generator has never seen: answers "
+             "'would this spec lose a field on the way into C?' without "
+             "needing an outdir or a compiler.")
     args = ap.parse_args()
 
     spec = json.loads(args.spec.read_text())
@@ -557,6 +662,19 @@ def main():
         print("       Re-extract with the current extract_chainparams.py.",
               file=sys.stderr)
         return 2
+
+    # Guard: refuse to generate if the spec has a consensus field we neither
+    # emit nor explicitly exclude. Runs before anything is written.
+    check_field_coverage(spec)
+
+    if args.check_fields_only:
+        # Reached only if coverage passed: check_field_coverage raises otherwise.
+        n = len({f for _, net in spec["networks"].items()
+                 for node in net.get("consensus_nodes", {}).values()
+                 for f in node.get("fields", {})})
+        print(f"OK: all {n} consensus field(s) in the spec are accounted for "
+              f"(emitted or explicitly excluded).", file=sys.stderr)
+        return 0
 
     # Guard: every chain must have an epoch at height 0, or the lookup's
     # "a match always exists" invariant breaks.
