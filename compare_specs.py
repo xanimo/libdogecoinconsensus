@@ -42,6 +42,13 @@ IGNORE_PROV = {
     "core_branch",      # CI detaches HEAD; devs are on a branch
     "core_detached",
     "core_describe_dirty",
+    # `git describe` abbreviates the hash to however many hex chars are needed
+    # to be unambiguous IN THAT REPO. A full clone needs more than a partial
+    # one, so the same commit renders as v1.14.7-239-g699f62ccba locally and
+    # v1.14.7-239-g699f62ccb in CI. Same commit, different string. The identity
+    # is core_commit (full 40 chars), which is NOT ignored; describe is
+    # decoration, per DIRECTIVE §9.
+    "core_describe",
     "_warning",
     "_error",
 }
