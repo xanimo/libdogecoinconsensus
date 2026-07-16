@@ -13,4 +13,4 @@ block 145,000.
 It is here because it is the clearest possible illustration of the failure mode
 this project exists to prevent: output that is confidently wrong. The extractor
 did not lie about it — the tree wiring landed in `_unparsed` rather than
-vanishing, which is what surfaced the bug. See DIRECTIVE.md §2a.
+vanishing, which is what surfaced the bug. See the README.
