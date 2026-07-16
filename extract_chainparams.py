@@ -323,6 +323,40 @@ def core_provenance(path: Path):
             repo = repo.parent
         else:
             repo = None
+
+        # Finding *a* git repo is not finding Core. Walking up from a file
+        # lands in whatever repo happens to contain it -- point this at a
+        # sample, a vendored copy, or a file inside this very repo, and the
+        # naive version stamps that repo's HEAD as `core_commit`. The result
+        # is a spec that claims to be derived from a Core commit that is not
+        # Core's, which is worse than no provenance: a rumor is recognizably a
+        # rumor, a fabricated pin is not. Everything downstream -- the sha256
+        # check, the regression gate, the pin itself -- rests on this being
+        # true.
+        #
+        # Core is identified by configure.ac carrying _CLIENT_VERSION_MAJOR.
+        # That is Core's own self-description, present in every version of it
+        # and in nothing else.
+        if repo is not None:
+            cfg = repo / "configure.ac"
+            is_core = False
+            if cfg.exists():
+                try:
+                    is_core = bool(re.search(
+                        r"define\(_CLIENT_VERSION_MAJOR,\s*\d+\)",
+                        cfg.read_text(errors="replace")))
+                except Exception:
+                    is_core = False
+            if not is_core:
+                prov["core_commit"] = None
+                prov["_warning"] = (
+                    f"not extracted from a Dogecoin Core checkout: {repo} has "
+                    f"no configure.ac defining _CLIENT_VERSION_MAJOR. "
+                    f"core_commit is deliberately null -- stamping this repo's "
+                    f"HEAD would fabricate a pin. file_sha256 still identifies "
+                    f"the exact bytes parsed.")
+                repo = None
+
         if repo:
             def git(*args):
                 return subprocess.run(
@@ -562,6 +596,11 @@ def main():
             # behind master. It is decoration; the commit is the truth.
             print(f"  nearest tag: {desc}", file=sys.stderr)
     print(f"  chainparams.cpp sha256: {prov.get('file_sha256','?')[:16]}...", file=sys.stderr)
+    if not commit and prov.get("_warning"):
+        # Loud: a spec with no core_commit is not pinnable, and the reason
+        # belongs on screen, not only in the JSON nobody opens.
+        print(f"  !! NOT A CORE CHECKOUT — core_commit is null", file=sys.stderr)
+        print(f"     {prov['_warning']}", file=sys.stderr)
     if prov.get("file_dirty"):
         print("  !! chainparams.cpp has UNCOMMITTED CHANGES — core_commit does not "
               "describe this file; trust the sha256, not the commit", file=sys.stderr)
