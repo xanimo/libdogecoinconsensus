@@ -130,10 +130,34 @@ def main():
                 print(f"       h={h:<9} {core[h]}")
 
         if extra:
-            print(f"    ?  {len(extra)} checkpoint(s) in libdogecoin but NOT Core:")
-            for h in extra:
-                print(f"       h={h:<9} {mine[h]}")
-            print("       (Core may have pruned these, or they were never upstream.)")
+            # "Core pruned these" and "these were never upstream" are not the
+            # same claim, and which one applies is decidable: compare against
+            # Core's highest checkpoint. Below it, a gap is plausibly a prune.
+            # ABOVE it, Core never had a checkpoint at that height at all, so
+            # pruning is impossible -- libdogecoin is asserting a consensus
+            # fact Core has not asserted. Reporting both under one hedge makes
+            # the interesting case invisible.
+            core_max = max(core) if core else -1
+            beyond = [h for h in extra if h > core_max]
+            within = [h for h in extra if h <= core_max]
+
+            if within:
+                print(f"    ?  {len(within)} checkpoint(s) in libdogecoin but "
+                      f"NOT Core, below Core's highest ({core_max}):")
+                for h in within:
+                    print(f"       h={h:<9} {mine[h]}")
+                print("       (plausibly pruned upstream, or never upstream.)")
+
+            if beyond:
+                print(f"    !! {len(beyond)} checkpoint(s) in libdogecoin BEYOND "
+                      f"Core's highest checkpoint ({core_max}):")
+                for h in beyond:
+                    print(f"       h={h:<9} {mine[h]}")
+                print("       Core has NO checkpoint at these heights, so these")
+                print("       cannot be prunes. libdogecoin is asserting checkpoints")
+                print("       Core does not assert. Not necessarily wrong -- but it")
+                print("       is a consensus claim with no upstream source, which is")
+                print("       the thing this repo exists to make visible.")
 
         if not (mismatched or missing or extra):
             print(f"    ok  identical: {len(core)} checkpoints match exactly")
