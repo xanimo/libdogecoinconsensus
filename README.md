@@ -175,6 +175,8 @@ A spec that is confidently wrong is worse than no spec.
 | file | purpose |
 |---|---|
 | `extract_chainparams.py` | `chainparams.cpp` → `spec.json` |
+| `extract_opcodes.py` | `script/script.h` → `opcodes.json` |
+| `gen_opcodes_c.py` | `opcodes.json` → opcode enum + name tables |
 | `verify_selection.py` | proves argmax ≡ Core's BST walk |
 | `gen_consensus_c.py` | `spec.json` → C API, epoch tables, tests |
 | `diff_checkpoints.py` | libdogecoin checkpoints vs Core |

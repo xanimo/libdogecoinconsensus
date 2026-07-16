@@ -1,0 +1,498 @@
+{
+  "_note": "Generated from Dogecoin Core script.h. Core is the source of truth. Do not hand-edit.",
+  "_provenance": {
+    "file_sha256": "ad612f17b44361d08992558108a7a4f43d177c7b171137dbc37cdaeb31739591",
+    "source": "/home/bluezr/source/repos/dogecoin-fresh/src/script/script.h",
+    "core_commit": "699f62ccba4e9c886a44d578c3923b4e14ef0a08",
+    "core_describe": "v1.14.7-239-g699f62ccba",
+    "file_dirty": false
+  },
+  "_enum": "opcodetype",
+  "opcodes": [
+    {
+      "name": "OP_0",
+      "value": 0
+    },
+    {
+      "name": "OP_FALSE",
+      "value": 0,
+      "alias_of": "OP_0"
+    },
+    {
+      "name": "OP_PUSHDATA1",
+      "value": 76
+    },
+    {
+      "name": "OP_PUSHDATA2",
+      "value": 77
+    },
+    {
+      "name": "OP_PUSHDATA4",
+      "value": 78
+    },
+    {
+      "name": "OP_1NEGATE",
+      "value": 79
+    },
+    {
+      "name": "OP_RESERVED",
+      "value": 80
+    },
+    {
+      "name": "OP_1",
+      "value": 81
+    },
+    {
+      "name": "OP_TRUE",
+      "value": 81,
+      "alias_of": "OP_1"
+    },
+    {
+      "name": "OP_2",
+      "value": 82
+    },
+    {
+      "name": "OP_3",
+      "value": 83
+    },
+    {
+      "name": "OP_4",
+      "value": 84
+    },
+    {
+      "name": "OP_5",
+      "value": 85
+    },
+    {
+      "name": "OP_6",
+      "value": 86
+    },
+    {
+      "name": "OP_7",
+      "value": 87
+    },
+    {
+      "name": "OP_8",
+      "value": 88
+    },
+    {
+      "name": "OP_9",
+      "value": 89
+    },
+    {
+      "name": "OP_10",
+      "value": 90
+    },
+    {
+      "name": "OP_11",
+      "value": 91
+    },
+    {
+      "name": "OP_12",
+      "value": 92
+    },
+    {
+      "name": "OP_13",
+      "value": 93
+    },
+    {
+      "name": "OP_14",
+      "value": 94
+    },
+    {
+      "name": "OP_15",
+      "value": 95
+    },
+    {
+      "name": "OP_16",
+      "value": 96
+    },
+    {
+      "name": "OP_NOP",
+      "value": 97
+    },
+    {
+      "name": "OP_VER",
+      "value": 98
+    },
+    {
+      "name": "OP_IF",
+      "value": 99
+    },
+    {
+      "name": "OP_NOTIF",
+      "value": 100
+    },
+    {
+      "name": "OP_VERIF",
+      "value": 101
+    },
+    {
+      "name": "OP_VERNOTIF",
+      "value": 102
+    },
+    {
+      "name": "OP_ELSE",
+      "value": 103
+    },
+    {
+      "name": "OP_ENDIF",
+      "value": 104
+    },
+    {
+      "name": "OP_VERIFY",
+      "value": 105
+    },
+    {
+      "name": "OP_RETURN",
+      "value": 106
+    },
+    {
+      "name": "OP_TOALTSTACK",
+      "value": 107
+    },
+    {
+      "name": "OP_FROMALTSTACK",
+      "value": 108
+    },
+    {
+      "name": "OP_2DROP",
+      "value": 109
+    },
+    {
+      "name": "OP_2DUP",
+      "value": 110
+    },
+    {
+      "name": "OP_3DUP",
+      "value": 111
+    },
+    {
+      "name": "OP_2OVER",
+      "value": 112
+    },
+    {
+      "name": "OP_2ROT",
+      "value": 113
+    },
+    {
+      "name": "OP_2SWAP",
+      "value": 114
+    },
+    {
+      "name": "OP_IFDUP",
+      "value": 115
+    },
+    {
+      "name": "OP_DEPTH",
+      "value": 116
+    },
+    {
+      "name": "OP_DROP",
+      "value": 117
+    },
+    {
+      "name": "OP_DUP",
+      "value": 118
+    },
+    {
+      "name": "OP_NIP",
+      "value": 119
+    },
+    {
+      "name": "OP_OVER",
+      "value": 120
+    },
+    {
+      "name": "OP_PICK",
+      "value": 121
+    },
+    {
+      "name": "OP_ROLL",
+      "value": 122
+    },
+    {
+      "name": "OP_ROT",
+      "value": 123
+    },
+    {
+      "name": "OP_SWAP",
+      "value": 124
+    },
+    {
+      "name": "OP_TUCK",
+      "value": 125
+    },
+    {
+      "name": "OP_CAT",
+      "value": 126
+    },
+    {
+      "name": "OP_SUBSTR",
+      "value": 127
+    },
+    {
+      "name": "OP_LEFT",
+      "value": 128
+    },
+    {
+      "name": "OP_RIGHT",
+      "value": 129
+    },
+    {
+      "name": "OP_SIZE",
+      "value": 130
+    },
+    {
+      "name": "OP_INVERT",
+      "value": 131
+    },
+    {
+      "name": "OP_AND",
+      "value": 132
+    },
+    {
+      "name": "OP_OR",
+      "value": 133
+    },
+    {
+      "name": "OP_XOR",
+      "value": 134
+    },
+    {
+      "name": "OP_EQUAL",
+      "value": 135
+    },
+    {
+      "name": "OP_EQUALVERIFY",
+      "value": 136
+    },
+    {
+      "name": "OP_RESERVED1",
+      "value": 137
+    },
+    {
+      "name": "OP_RESERVED2",
+      "value": 138
+    },
+    {
+      "name": "OP_1ADD",
+      "value": 139
+    },
+    {
+      "name": "OP_1SUB",
+      "value": 140
+    },
+    {
+      "name": "OP_2MUL",
+      "value": 141
+    },
+    {
+      "name": "OP_2DIV",
+      "value": 142
+    },
+    {
+      "name": "OP_NEGATE",
+      "value": 143
+    },
+    {
+      "name": "OP_ABS",
+      "value": 144
+    },
+    {
+      "name": "OP_NOT",
+      "value": 145
+    },
+    {
+      "name": "OP_0NOTEQUAL",
+      "value": 146
+    },
+    {
+      "name": "OP_ADD",
+      "value": 147
+    },
+    {
+      "name": "OP_SUB",
+      "value": 148
+    },
+    {
+      "name": "OP_MUL",
+      "value": 149
+    },
+    {
+      "name": "OP_DIV",
+      "value": 150
+    },
+    {
+      "name": "OP_MOD",
+      "value": 151
+    },
+    {
+      "name": "OP_LSHIFT",
+      "value": 152
+    },
+    {
+      "name": "OP_RSHIFT",
+      "value": 153
+    },
+    {
+      "name": "OP_BOOLAND",
+      "value": 154
+    },
+    {
+      "name": "OP_BOOLOR",
+      "value": 155
+    },
+    {
+      "name": "OP_NUMEQUAL",
+      "value": 156
+    },
+    {
+      "name": "OP_NUMEQUALVERIFY",
+      "value": 157
+    },
+    {
+      "name": "OP_NUMNOTEQUAL",
+      "value": 158
+    },
+    {
+      "name": "OP_LESSTHAN",
+      "value": 159
+    },
+    {
+      "name": "OP_GREATERTHAN",
+      "value": 160
+    },
+    {
+      "name": "OP_LESSTHANOREQUAL",
+      "value": 161
+    },
+    {
+      "name": "OP_GREATERTHANOREQUAL",
+      "value": 162
+    },
+    {
+      "name": "OP_MIN",
+      "value": 163
+    },
+    {
+      "name": "OP_MAX",
+      "value": 164
+    },
+    {
+      "name": "OP_WITHIN",
+      "value": 165
+    },
+    {
+      "name": "OP_RIPEMD160",
+      "value": 166
+    },
+    {
+      "name": "OP_SHA1",
+      "value": 167
+    },
+    {
+      "name": "OP_SHA256",
+      "value": 168
+    },
+    {
+      "name": "OP_HASH160",
+      "value": 169
+    },
+    {
+      "name": "OP_HASH256",
+      "value": 170
+    },
+    {
+      "name": "OP_CODESEPARATOR",
+      "value": 171
+    },
+    {
+      "name": "OP_CHECKSIG",
+      "value": 172
+    },
+    {
+      "name": "OP_CHECKSIGVERIFY",
+      "value": 173
+    },
+    {
+      "name": "OP_CHECKMULTISIG",
+      "value": 174
+    },
+    {
+      "name": "OP_CHECKMULTISIGVERIFY",
+      "value": 175
+    },
+    {
+      "name": "OP_NOP1",
+      "value": 176
+    },
+    {
+      "name": "OP_CHECKLOCKTIMEVERIFY",
+      "value": 177
+    },
+    {
+      "name": "OP_NOP2",
+      "value": 177,
+      "alias_of": "OP_CHECKLOCKTIMEVERIFY"
+    },
+    {
+      "name": "OP_CHECKSEQUENCEVERIFY",
+      "value": 178
+    },
+    {
+      "name": "OP_NOP3",
+      "value": 178,
+      "alias_of": "OP_CHECKSEQUENCEVERIFY"
+    },
+    {
+      "name": "OP_NOP4",
+      "value": 179
+    },
+    {
+      "name": "OP_NOP5",
+      "value": 180
+    },
+    {
+      "name": "OP_NOP6",
+      "value": 181
+    },
+    {
+      "name": "OP_NOP7",
+      "value": 182
+    },
+    {
+      "name": "OP_NOP8",
+      "value": 183
+    },
+    {
+      "name": "OP_NOP9",
+      "value": 184
+    },
+    {
+      "name": "OP_NOP10",
+      "value": 185
+    },
+    {
+      "name": "OP_SMALLINTEGER",
+      "value": 250
+    },
+    {
+      "name": "OP_PUBKEYS",
+      "value": 251
+    },
+    {
+      "name": "OP_PUBKEYHASH",
+      "value": 253
+    },
+    {
+      "name": "OP_PUBKEY",
+      "value": 254
+    },
+    {
+      "name": "OP_INVALIDOPCODE",
+      "value": 255
+    }
+  ],
+  "_unparsed": []
+}
