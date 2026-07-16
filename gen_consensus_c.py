@@ -52,8 +52,16 @@ BOOL_FIELDS = [
     "fStrictChainId",
 ]
 
-# uint256 fields. Empty for now: see EXCLUDED_FIELDS.
-HASH_FIELDS = []
+# uint256 fields, emitted as uint8_t[32] big-endian -- the byte order Core's
+# uint256S() literal is written in, and the order these are displayed in.
+# NOT the internal little-endian memory layout of Core's uint256; a consumer
+# comparing against a serialized hash must account for that itself.
+HASH_FIELDS = [
+    "powLimit",
+    "nMinimumChainWork",
+    "BIP34Hash",
+    "defaultAssumeValid",
+]
 
 # Fields present in the spec that are deliberately NOT emitted, each with the
 # reason. This is a declaration, not a dumping ground: an entry here is a claim
@@ -70,18 +78,38 @@ EXCLUDED_FIELDS = {
     "hashGenesisBlock":
         "computed by Core at runtime (genesis.GetHash()); no literal in "
         "chainparams.cpp -- value lives only in the adjacent assert()",
-
-    # These four are uint256 and consensus-critical -- powLimit in particular
-    # is the difficulty clamp, and it varies by epoch. They are excluded here
-    # only because this commit adds the gate, and the gate's whole point is
-    # that a field is never dropped without a stated reason. Recording the
-    # debt honestly is the prerequisite for paying it; the next commit emits
-    # them and deletes these four entries.
-    "powLimit": "uint256; not yet representable in the epoch struct",
-    "nMinimumChainWork": "uint256; not yet representable in the epoch struct",
-    "BIP34Hash": "uint256; not yet representable in the epoch struct",
-    "defaultAssumeValid": "uint256; not yet representable in the epoch struct",
 }
+
+
+def hash_to_c_bytes(value):
+    """'0x00000fff...' -> 32 bytes, big-endian.
+
+    Returns None if the value is not a hex literal we can represent -- e.g.
+    `uint256()`, Core's default-constructed zero. Callers must decide what an
+    unrepresentable value means rather than guessing a zero here (rule 7):
+    a silently-zeroed powLimit is a difficulty clamp of zero.
+    """
+    if not isinstance(value, str):
+        return None
+    v = value.strip()
+    if v == "uint256()":          # Core's explicit zero
+        v = "0x0"
+    if not v.startswith("0x"):
+        return None
+    h = v[2:]
+    if not h or any(c not in "0123456789abcdefABCDEF" for c in h):
+        return None
+    if len(h) > 64:
+        return None
+    return bytes.fromhex(h.rjust(64, "0"))
+
+
+def fmt_hash_init(b):
+    """32 bytes -> brace initializer, 8 bytes per line."""
+    rows = []
+    for i in range(0, 32, 8):
+        rows.append(", ".join(f"0x{x:02x}" for x in b[i:i + 8]))
+    return "{\n" + "".join(f"            {r},\n" for r in rows) + "        }"
 
 
 def check_field_coverage(spec):
@@ -242,6 +270,8 @@ def gen_header(spec):
         out.append(f"    {t:<10} {f};")
     for f in BOOL_FIELDS:
         out.append(f"    {'bool':<10} {f};")
+    for f in HASH_FIELDS:
+        out.append(f"    uint8_t    {f}[32];   /* big-endian, as written in Core */")
     out.append("} dogecoin_consensus_params;")
     out.append("")
 
@@ -331,6 +361,21 @@ def gen_impl(spec):
                 v = eff.get(f)
                 if isinstance(v, bool):
                     out.append(f"        .{f} = {'true' if v else 'false'},")
+            for f in HASH_FIELDS:
+                v = eff.get(f)
+                if v is None:
+                    continue
+                b = hash_to_c_bytes(v)
+                if b is None:
+                    # Rule 7: a wrong constant is worse than a crash. Do not
+                    # guess a zero for a value we could not parse.
+                    raise SystemExit(
+                        f"error: {cls}::{st['node']}.{f} = {v!r}\n"
+                        f"       is not a hex uint256 literal this generator "
+                        f"can represent.\n"
+                        f"       Emitting a default here would be a wrong "
+                        f"consensus constant.")
+                out.append(f"        .{f} = {fmt_hash_init(b)},")
             out.append("    },")
         out.append("};")
         out.append("")
