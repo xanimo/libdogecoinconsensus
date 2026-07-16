@@ -143,3 +143,25 @@ jobs:
           # sorted-array assumption could stop holding. Catch that here rather
           # than in a client that has already shipped.
           ./verify_selection.py tip.json
+
+      - name: no field at Core tip would be dropped on the way into C
+        run: |
+          # The generator's emit lists are hand-maintained, so a field Core adds
+          # tomorrow is accounted for nowhere and would vanish from the library.
+          # The coverage gate catches that — but it only runs at generation
+          # time, and `verify` generates from the PINNED Core, where by
+          # construction nothing is unknown. This is the only job that ever sees
+          # a Core the generator hasn't been taught about, so it is the only
+          # place the gate can actually fire.
+          #
+          # Distinct from the regression gate above: that one flattens
+          # effective_fields generically, so a NEW field reads as one more
+          # changed value among hundreds — "Core moved", not "the library would
+          # silently drop this". Same input, different question.
+          if ! ./gen_consensus_c.py tip.json --check-fields-only; then
+            echo "::error::Core tip has a consensus field the generator does not account for."
+            echo "It would be dropped silently from the generated library (README rule 1)."
+            echo "Fix: add it to INT_FIELDS/BOOL_FIELDS/HASH_FIELDS, or to"
+            echo "EXCLUDED_FIELDS with the reason omitting it is correct."
+            exit 1
+          fi
