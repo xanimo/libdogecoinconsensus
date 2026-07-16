@@ -10,10 +10,18 @@ src/dogecoin_consensus.h
 src/dogecoin_consensus.c
 src/test_consensus.c
 src/test_consensus_exhaustive.c
+src/dogecoin_opcodes.h
+src/dogecoin_opcodes.c
+src/test_opcodes.c
+src/dogecoin_reject.h
+src/dogecoin_reject.c
+src/test_reject.c
 
 # Build artifacts
 t_bound
 t_exh
+t_ops
+t_rej
 *.o
 *.a
 *.so
@@ -24,4 +32,3 @@ __pycache__/
 *.pyc
 .venv/
 venv/
-COMMIT_MSG.txt

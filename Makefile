@@ -14,6 +14,7 @@ CFLAGS      ?= -std=c99 -Wall -Wextra -Werror -O2
 SRC         := src
 CHAINPARAMS := $(CORE)/src/chainparams.cpp
 SCRIPT_H    := $(CORE)/src/script/script.h
+VALIDATION_H := $(CORE)/src/consensus/validation.h
 
 GENERATED := $(SRC)/dogecoin_consensus.h \
              $(SRC)/dogecoin_consensus.c \
@@ -24,13 +25,18 @@ GENERATED_OPS := $(SRC)/dogecoin_opcodes.h \
                  $(SRC)/dogecoin_opcodes.c \
                  $(SRC)/test_opcodes.c
 
-.PHONY: all spec opcodes gen verify check diff pin gate clean help check-libdogecoin
+GENERATED_REJECT := $(SRC)/dogecoin_reject.h \
+                    $(SRC)/dogecoin_reject.c \
+                    $(SRC)/test_reject.c
+
+.PHONY: all spec opcodes reject gen verify check diff pin gate clean help check-libdogecoin
 
 all: check
 
 help:
 	@echo "make spec   CORE=<path>          extract spec.json from Dogecoin Core"
 	@echo "make opcodes CORE=<path>         extract opcodes.json from Core script.h"
+	@echo "make reject  CORE=<path>         extract reject.json from Core validation.h"
 	@echo "make gen                         generate C sources into $(SRC)/"
 	@echo "make verify                      prove argmax == Core's BST walk"
 	@echo "make check                       build + run boundary and exhaustive tests"
@@ -88,7 +94,23 @@ opcodes: opcodes.json
 $(GENERATED_OPS): opcodes.json gen_opcodes_c.py
 	./gen_opcodes_c.py opcodes.json -o $(SRC)/
 
-gen: $(GENERATED) $(GENERATED_OPS)
+reject.json: $(wildcard $(VALIDATION_H))
+	@test -f "$(VALIDATION_H)" || { \
+	  echo ""; \
+	  echo "error: cannot find $(VALIDATION_H)"; \
+	  echo "       Set CORE to your Dogecoin Core checkout:"; \
+	  echo "         make $(or $(MAKECMDGOALS),reject) CORE=~/source/repos/dogecoin"; \
+	  echo ""; \
+	  exit 1; }
+	./extract_constants.py $(VALIDATION_H) --prefix REJECT_ -o $@
+
+reject: reject.json
+
+$(GENERATED_REJECT): reject.json gen_constants_c.py
+	./gen_constants_c.py reject.json -o $(SRC)/ --name reject \
+	    --title "P2P reject message codes"
+
+gen: $(GENERATED) $(GENERATED_OPS) $(GENERATED_REJECT)
 
 check: gen
 	$(CC) $(CFLAGS) -o t_bound $(SRC)/test_consensus.c $(SRC)/dogecoin_consensus.c
@@ -97,6 +119,8 @@ check: gen
 	./t_exh
 	$(CC) $(CFLAGS) -o t_ops $(SRC)/test_opcodes.c $(SRC)/dogecoin_opcodes.c
 	./t_ops
+	$(CC) $(CFLAGS) -o t_rej $(SRC)/test_reject.c $(SRC)/dogecoin_reject.c
+	./t_rej
 
 check-libdogecoin:
 	@test -f "$(LIBDOGECOIN)/src/chainparams.c" || { \
@@ -126,11 +150,11 @@ diff: check-libdogecoin
 	./diff_checkpoints.py spec.json --libdogecoin $(LIBDOGECOIN)/src/chainparams.c
 
 clean:
-	rm -f t_bound t_exh t_ops $(GENERATED) $(GENERATED_OPS)
+	rm -f t_bound t_exh t_ops t_rej $(GENERATED) $(GENERATED_OPS) $(GENERATED_REJECT)
 	rm -rf __pycache__
 
 # spec.json is deliberately NOT removed by clean: it's the pinned reference and
 # regenerating requires a Core checkout. Use `make distclean` to drop it.
 .PHONY: distclean
 distclean: clean
-	rm -f spec.json opcodes.json
+	rm -f spec.json opcodes.json reject.json

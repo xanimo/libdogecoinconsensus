@@ -1,0 +1,54 @@
+{
+  "_note": "Generated from Dogecoin Core. Core is the source of truth. Do not hand-edit.",
+  "_provenance": {
+    "file_sha256": "9190e617286665c812f66b275732b5db75e7a5592595320cec85ff322e8bc7ce",
+    "source": "/home/bluezr/source/repos/dogecoin-fresh/src/consensus/validation.h",
+    "core_commit": "699f62ccba4e9c886a44d578c3923b4e14ef0a08",
+    "core_describe": "v1.14.7-239-g699f62ccba",
+    "file_dirty": false
+  },
+  "_prefix": "REJECT_",
+  "constants": [
+    {
+      "name": "REJECT_MALFORMED",
+      "value": 1,
+      "type": "unsigned char"
+    },
+    {
+      "name": "REJECT_INVALID",
+      "value": 16,
+      "type": "unsigned char"
+    },
+    {
+      "name": "REJECT_OBSOLETE",
+      "value": 17,
+      "type": "unsigned char"
+    },
+    {
+      "name": "REJECT_DUPLICATE",
+      "value": 18,
+      "type": "unsigned char"
+    },
+    {
+      "name": "REJECT_NONSTANDARD",
+      "value": 64,
+      "type": "unsigned char"
+    },
+    {
+      "name": "REJECT_DUST",
+      "value": 65,
+      "type": "unsigned char"
+    },
+    {
+      "name": "REJECT_INSUFFICIENTFEE",
+      "value": 66,
+      "type": "unsigned char"
+    },
+    {
+      "name": "REJECT_CHECKPOINT",
+      "value": 67,
+      "type": "unsigned char"
+    }
+  ],
+  "_unparsed": []
+}
