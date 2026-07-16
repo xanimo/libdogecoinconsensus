@@ -360,4 +360,7 @@ reproducibility instead.
 
 ## License
 
-TBD.
+MIT. See [`LICENSE`](LICENSE).
+
+Same terms as Dogecoin Core and libdogecoin, so code and definitions can move
+between them without a licensing question.
